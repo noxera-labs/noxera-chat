@@ -16,9 +16,9 @@ import anthropic
 import chromadb
 import pdfplumber
 from chromadb.utils import embedding_functions
-from fastapi import FastAPI
+from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse
+from fastapi.responses import JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
@@ -93,11 +93,11 @@ def file_hash(content: bytes) -> str:
     return hashlib.sha256(content).hexdigest()[:16]
 
 
-def _index_text(path: Path, text: str) -> tuple[str, int]:
+def _index_text(filename: str, text: str, source_path: str = "") -> tuple[str, int]:
     """Index extracted text into ChromaDB. Returns (status, chunks_added)."""
-    content_bytes = text.encode()
-    fhash = file_hash(content_bytes)
-    doc_id = f"{path.stem}__{fhash}"
+    fhash = file_hash(text.encode())
+    stem = Path(filename).stem
+    doc_id = f"{stem}__{fhash}"
 
     existing = collection.get(where={"doc_id": doc_id}, limit=1)
     if existing.get("ids"):
@@ -111,9 +111,9 @@ def _index_text(path: Path, text: str) -> tuple[str, int]:
     metadatas = [
         {
             "doc_id": doc_id,
-            "filename": path.name,
+            "filename": filename,
             "chunk_index": i,
-            "source_path": str(path.relative_to(DOCS_DIR)),
+            "source_path": source_path or filename,
         }
         for i in range(len(chunks))
     ]
@@ -122,18 +122,17 @@ def _index_text(path: Path, text: str) -> tuple[str, int]:
 
 
 def index_pdf(path: Path) -> tuple[str, int]:
-    content = path.read_bytes()
-    text = extract_pdf_text(content)
+    text = extract_pdf_text(path.read_bytes())
     if not text:
         return ("empty", 0)
-    return _index_text(path, text)
+    return _index_text(path.name, text, str(path.relative_to(DOCS_DIR)))
 
 
 def index_txt(path: Path) -> tuple[str, int]:
     text = path.read_text(encoding="utf-8", errors="ignore").strip()
     if not text:
         return ("empty", 0)
-    return _index_text(path, text)
+    return _index_text(path.name, text, str(path.relative_to(DOCS_DIR)))
 
 
 def sync_docs_folder():
@@ -144,10 +143,10 @@ def sync_docs_folder():
     for f in files:
         try:
             if f.suffix == ".pdf":
-                content = f.read_bytes()
+                text = extract_pdf_text(f.read_bytes())
             else:
-                content = f.read_text(encoding="utf-8", errors="ignore").encode()
-            doc_id = f"{f.stem}__{file_hash(content)}"
+                text = f.read_text(encoding="utf-8", errors="ignore")
+            doc_id = f"{f.stem}__{file_hash(text.encode())}"
             seen_doc_ids.add(doc_id)
             status, _ = (index_pdf if f.suffix == ".pdf" else index_txt)(f)
             summary[status] = summary.get(status, 0) + 1
@@ -187,7 +186,7 @@ async def lifespan(_app: FastAPI):
 # ──────────────────────────────────────────────
 # App
 # ──────────────────────────────────────────────
-app = FastAPI(title="Noxera Labs AI Chat", version="4.0.0", lifespan=lifespan)
+app = FastAPI(title="Noxera Labs AI Chat", version="4.1.0", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -204,6 +203,7 @@ class QueryRequest(BaseModel):
     question: str
     n_results: int = 5
     model: str | None = None
+    web_search: bool = False
 
 
 # ──────────────────────────────────────────────
@@ -271,12 +271,17 @@ async def query_stream(req: QueryRequest):
             yield sse("sources", {"sources": sources_payload(metadatas, distances)})
 
         try:
-            async with anthropic_client.messages.stream(
+            stream_kwargs: dict = dict(
                 model=model,
                 max_tokens=2048,
                 system=SYSTEM_PROMPT,
                 messages=build_messages(req.question, chunks, metadatas),
-            ) as stream:
+            )
+            if req.web_search:
+                stream_kwargs["tools"] = [{"type": "web_search_20260209", "name": "web_search"}]
+                yield sse("status", {"text": "Web-Suche läuft…"})
+
+            async with anthropic_client.messages.stream(**stream_kwargs) as stream:
                 async for text in stream.text_stream:
                     yield sse("token", {"text": text})
             yield sse("done", {})
@@ -290,9 +295,32 @@ async def query_stream(req: QueryRequest):
     )
 
 
+@app.post("/upload")
+async def upload_document(file: UploadFile = File(...)):
+    filename = file.filename or "upload"
+    suffix = Path(filename).suffix.lower()
+    if suffix not in (".pdf", ".txt"):
+        return JSONResponse(
+            {"status": "error", "message": "Nur PDF und TXT werden unterstützt"},
+            status_code=400,
+        )
+    content = await file.read()
+    if suffix == ".pdf":
+        text = extract_pdf_text(content)
+        if not text:
+            return {"status": "empty", "chunks": 0, "filename": filename}
+    else:
+        text = content.decode("utf-8", errors="ignore").strip()
+        if not text:
+            return {"status": "empty", "chunks": 0, "filename": filename}
+
+    status, n = _index_text(filename, text)
+    return {"status": status, "chunks": n, "filename": filename}
+
+
 @app.get("/health")
 async def health():
-    return {"status": "ok", "chunks_indexed": collection.count(), "version": "4.0.0"}
+    return {"status": "ok", "chunks_indexed": collection.count(), "version": "4.1.0"}
 
 
 @app.post("/admin/reindex")
