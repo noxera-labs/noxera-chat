@@ -90,6 +90,28 @@ Wenn Kontext-Abschnitte aus Dokumenten bereitgestellt werden:
 Wenn kein Dokumentkontext vorhanden ist:
 - Beantworte Fragen aus deinem allgemeinen Wissen
 
+Wenn Nutzer fragen, wie sie eine Anfrage stellen, Noxera kontaktieren,
+ein Projekt anfragen, einen Termin buchen oder "eine Anfrage" ohne weiteren
+Kontext erwähnen:
+- Verstehe das als Anfrage an Noxera Labs, nicht als allgemeine Erklärung,
+  wie man dir als Chat-Assistent eine Frage stellt.
+- Erkläre kurz den passenden Weg über die Noxera-Website:
+  Allgemeine Anfragen: https://noxera-labs.de/anfragen
+  Website- und App-Projekte: https://noxera-labs.de/onboarding
+  KI-Automatisierung: https://noxera-labs.de/ki-anfrage
+  Termin buchen: https://noxera-labs.de/termin
+  Kontakt: https://noxera-labs.de/contact oder info@noxera-labs.de
+
+Wenn die Antwort Noxera Labs, ein Projekt, eine Zusammenarbeit, Kontakt,
+Website, Leistungen, Preise oder nächste Schritte betrifft:
+- Füge am Ende knapp passende Links hinzu, z.B.
+  Website: https://noxera-labs.de
+  Kontakt: https://noxera-labs.de/contact
+  Anfrage: https://noxera-labs.de/anfragen
+  Termin: https://noxera-labs.de/termin
+  E-Mail: info@noxera-labs.de
+- Wähle nur Links, die zur Frage passen, und übertreibe es nicht.
+
 Antworte stets präzise, hilfreich und in der Sprache der Frage.""",
 )
 
@@ -202,7 +224,7 @@ def index_txt(path: Path) -> tuple[str, int]:
 def sync_docs_folder():
     files = sorted(DOCS_DIR.rglob("*.pdf")) + sorted(DOCS_DIR.rglob("*.txt"))
     seen_doc_ids: set[str] = set()
-    summary = {"indexed": 0, "skipped": 0, "empty": 0, "too_short": 0, "removed": 0}
+    summary = {"indexed": 0, "skipped": 0, "empty": 0, "too_short": 0, "removed": 0, "errors": 0}
 
     for f in files:
         try:
@@ -215,22 +237,26 @@ def sync_docs_folder():
             status, _ = (index_pdf if f.suffix == ".pdf" else index_txt)(f)
             summary[status] = summary.get(status, 0) + 1
         except Exception as e:
+            summary["errors"] += 1
             print(f"[ingest] {f.name}: error {e}")
 
     try:
-        existing = collection.get()
-        stale_ids: set[str] = set()
-        for meta in existing.get("metadatas", []) or []:
-            if not meta:
-                continue
-            d = meta.get("doc_id")
-            if d and d not in seen_doc_ids:
-                stale_ids.add(d)
-        for d in stale_ids:
-            entries = collection.get(where={"doc_id": d})
-            if entries.get("ids"):
-                collection.delete(ids=entries["ids"])
-                summary["removed"] += 1
+        if summary["errors"] == 0:
+            existing = collection.get()
+            stale_ids: set[str] = set()
+            for meta in existing.get("metadatas", []) or []:
+                if not meta:
+                    continue
+                d = meta.get("doc_id")
+                if d and d not in seen_doc_ids:
+                    stale_ids.add(d)
+            for d in stale_ids:
+                entries = collection.get(where={"doc_id": d})
+                if entries.get("ids"):
+                    collection.delete(ids=entries["ids"])
+                    summary["removed"] += 1
+        else:
+            print("[ingest] cleanup skipped because indexing had errors")
     except Exception as e:
         print(f"[ingest] cleanup warning: {e}")
 
