@@ -365,31 +365,137 @@
     .model-opt-check { color: var(--accent); opacity: 0; flex-shrink: 0; }
     .model-opt.selected .model-opt-check { opacity: 1; }
 
-    /* ─── Mobile sidebar overlay ─── */
+    /* ─── Sidebar overlay ─── */
     .sidebar-overlay {
       display: none; position: fixed; inset: 0;
-      background: rgba(0,0,0,0.5); z-index: 15;
+      background: rgba(0,0,0,0.55);
+      backdrop-filter: blur(2px);
+      -webkit-backdrop-filter: blur(2px);
+      z-index: 15;
     }
-    .mob-header {
-      display: none; align-items: center; gap: 10px;
-      padding: 12px 16px; border-bottom: 1px solid var(--border);
-      flex-shrink: 0;
-    }
-    .mob-toggle { width: 32px; height: 32px; border-radius: 8px; background: transparent; border: none; cursor: pointer; color: var(--text2); display: flex; align-items: center; justify-content: center; }
+    .sidebar-overlay.mob-open { display: block; }
 
+    /* ─── Mobile header (hidden on desktop) ─── */
+    .mob-header {
+      display: none; align-items: center;
+      padding: 0 12px;
+      height: 54px; flex-shrink: 0;
+      border-bottom: 1px solid var(--border);
+      background: rgba(15,15,18,0.95);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      position: sticky; top: 0; z-index: 10;
+    }
+    .mob-toggle {
+      width: 40px; height: 40px; border-radius: 10px;
+      background: transparent; border: none; cursor: pointer;
+      color: var(--text2); display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; -webkit-tap-highlight-color: transparent;
+    }
+    .mob-toggle:active { background: var(--s2); }
+    .mob-logo-wrap { flex: 1; display: flex; justify-content: center; }
+    .mob-new-btn {
+      width: 40px; height: 40px; border-radius: 10px;
+      background: var(--adim); border: 1px solid var(--aborder);
+      cursor: pointer; color: var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; -webkit-tap-highlight-color: transparent;
+    }
+    .mob-new-btn:active { background: rgba(0,207,255,0.18); }
+
+    /* ─── Mobile: model dropdown as bottom sheet ─── */
     @media (max-width: 768px) {
-      .sidebar { position: fixed; left: 0; top: 0; bottom: 0; z-index: 20; transform: translateX(-100%); transition: transform 0.25s ease; width: var(--sb-w) !important; }
+      .sidebar {
+        position: fixed; left: 0; top: 0; bottom: 0; z-index: 20;
+        transform: translateX(-100%);
+        transition: transform 0.26s cubic-bezier(0.4,0,0.2,1);
+        width: 280px !important;
+        box-shadow: 4px 0 32px rgba(0,0,0,0.5);
+      }
       .sidebar.mob-open { transform: translateX(0); }
-      .sidebar-overlay.mob-open { display: block; }
-      .mob-header { display: flex; }
-      .sidebar.collapsed .sb-label,
+
+      /* reset desktop collapsed styles on mobile */
+      .sidebar.collapsed { width: 280px !important; }
       .sidebar.collapsed .new-chat-text,
       .sidebar.collapsed .hist-label,
       .sidebar.collapsed .chat-group,
-      .sidebar.collapsed .sb-logo { opacity: 1; pointer-events: auto; }
-      .welcome-title { font-size: 1.5rem; }
-      .composer-wrap { padding: 8px 12px 16px; }
-      .messages { padding: 16px 12px 8px; }
+      .sidebar.collapsed .sb-logo { opacity: 1 !important; pointer-events: auto !important; }
+
+      .mob-header { display: flex; }
+      .sb-toggle { display: none; }
+
+      /* Welcome */
+      .welcome { padding: 28px 20px 12px; justify-content: flex-start; padding-top: 40px; }
+      .welcome-title { font-size: 1.55rem; }
+      .welcome-desc { font-size: 0.9rem; max-width: 100%; }
+      .welcome-by { margin-bottom: 20px; }
+      .app-badge { margin-bottom: 14px; }
+      .badge-icon { width: 42px; height: 42px; }
+
+      /* Messages */
+      .messages { padding: 16px 14px 8px; gap: 18px; }
+      .msg-body { font-size: 0.93rem; }
+
+      /* Chips: horizontal scroll, no wrap */
+      .quick-chips {
+        flex-wrap: nowrap;
+        overflow-x: auto; overflow-y: hidden;
+        justify-content: flex-start;
+        padding-bottom: 4px;
+        margin-left: -2px;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+      }
+      .quick-chips::-webkit-scrollbar { display: none; }
+      .chip { flex-shrink: 0; font-size: 0.8rem; padding: 7px 14px; }
+
+      /* Composer */
+      .composer-wrap {
+        padding: 6px 12px;
+        padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+      }
+      textarea#question { font-size: 16px; } /* prevent iOS zoom */
+      #send { width: 38px; height: 38px; border-radius: 10px; }
+
+      /* Model dropdown → bottom sheet */
+      .model-dropdown {
+        position: fixed !important;
+        bottom: 0 !important; left: 0 !important; right: 0 !important;
+        top: auto !important;
+        padding: 0 !important;
+        align-items: flex-end;
+      }
+      .model-dropdown-inner {
+        width: 100% !important; max-width: 100% !important;
+        border-radius: 20px 20px 0 0 !important;
+        padding: 8px 8px calc(8px + env(safe-area-inset-bottom, 0px));
+        border-bottom: none !important;
+      }
+      .model-dropdown-inner::before {
+        content: '';
+        display: block; width: 36px; height: 4px;
+        background: rgba(255,255,255,0.15); border-radius: 2px;
+        margin: 4px auto 12px;
+      }
+      .model-opt { padding: 13px 14px; }
+      .model-opt-icon { width: 36px; height: 36px; }
+
+      /* Chat items: always show delete on mobile */
+      .chat-delete { opacity: 0.6 !important; }
+      .chat-item { padding: 8px 10px; }
+      .chat-item-title { font-size: 0.85rem; }
+    }
+
+    /* iOS safe area for home indicator */
+    @supports (padding-bottom: env(safe-area-inset-bottom)) {
+      .composer-wrap {
+        padding-bottom: calc(20px + env(safe-area-inset-bottom));
+      }
+      @media (max-width: 768px) {
+        .composer-wrap {
+          padding-bottom: calc(12px + env(safe-area-inset-bottom));
+        }
+      }
     }
 
     @keyframes fadeIn { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:translateY(0); } }
@@ -429,10 +535,15 @@
   <div class="main" id="main">
     <!-- Mobile header -->
     <div class="mob-header">
-      <button class="mob-toggle" id="mob-toggle">
+      <button class="mob-toggle" id="mob-toggle" aria-label="Menü öffnen">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
       </button>
-      <img src="https://noxera-labs.de/logo.svg" alt="Noxera" style="height:20px;width:auto;" />
+      <div class="mob-logo-wrap">
+        <img src="https://noxera-labs.de/logo.svg" alt="Noxera" style="height:22px;width:auto;" />
+      </div>
+      <button class="mob-new-btn" id="mob-new-btn" aria-label="Neuer Chat">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </button>
     </div>
 
     <!-- Welcome -->
@@ -700,6 +811,7 @@ function startNewChat() {
 }
 
 document.getElementById('new-chat-btn').addEventListener('click', startNewChat);
+document.getElementById('mob-new-btn').addEventListener('click', startNewChat);
 
 // ─── Message rendering ───
 function appendUserMsg(text) {
