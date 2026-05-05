@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Noxera Labs AI</title>
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="shortcut icon" href="/favicon.svg" />
@@ -41,7 +41,7 @@
     body { font-family: var(--f); background: var(--bg); color: var(--text); display: flex; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 
     /* ─── Layout ─── */
-    .app { display: flex; width: 100%; height: 100vh; overflow: hidden; }
+    .app { display: flex; width: 100%; height: 100vh; height: 100dvh; overflow: hidden; }
 
     /* ─── Sidebar ─── */
     .sidebar {
@@ -49,7 +49,7 @@
       background: var(--sb);
       border-right: 1px solid var(--border);
       display: flex; flex-direction: column;
-      height: 100vh; overflow: hidden;
+      height: 100vh; height: 100dvh; overflow: hidden;
       transition: width 0.22s ease;
       position: relative; z-index: 20;
     }
@@ -101,6 +101,58 @@
       transition: opacity 0.18s;
     }
 
+    .kb-card {
+      margin: 0 8px 8px;
+      padding: 11px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: linear-gradient(180deg, rgba(0,207,255,0.07), rgba(255,255,255,0.025));
+    }
+    .kb-card-head {
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+      font-family: var(--mono); font-size: 0.58rem;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 8px;
+    }
+    .kb-refresh {
+      width: 24px; height: 24px; border-radius: 6px;
+      border: 1px solid var(--aborder); background: transparent;
+      color: var(--accent); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .kb-refresh:hover { background: var(--adim); }
+    .kb-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
+    .kb-stat {
+      padding: 7px 8px; border-radius: 7px;
+      background: rgba(255,255,255,0.035); border: 1px solid var(--border);
+    }
+    .kb-value {
+      display: block; font-family: var(--fd); font-size: 1rem;
+      line-height: 1; color: var(--text); font-weight: 600;
+    }
+    .kb-label {
+      display: block; margin-top: 4px; font-family: var(--mono);
+      font-size: 0.56rem; color: var(--text3); text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .kb-files {
+      margin-top: 8px; display: flex; flex-direction: column; gap: 4px;
+      max-height: 92px; overflow: auto;
+    }
+    .kb-file {
+      font-size: 0.72rem; color: var(--text2);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .kb-updated {
+      margin-top: 7px; font-family: var(--mono); font-size: 0.56rem;
+      color: var(--text3); text-transform: uppercase; letter-spacing: 0.08em;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .kb-hint {
+      margin-top: 8px; color: var(--text3); font-size: 0.68rem;
+      line-height: 1.45;
+    }
+
     .chat-group { margin-bottom: 4px; transition: opacity 0.18s; }
     .group-header {
       display: flex; align-items: center; justify-content: space-between;
@@ -149,7 +201,7 @@
     /* ─── Main ─── */
     .main {
       flex: 1; display: flex; flex-direction: column;
-      height: 100vh; overflow: hidden; min-width: 0;
+      height: 100vh; height: 100dvh; overflow: hidden; min-width: 0;
       position: relative;
     }
 
@@ -335,6 +387,12 @@
     }
     .chip:hover { background: var(--adim); border-color: var(--aborder); color: var(--text); }
 
+    .cost-note {
+      display: flex; justify-content: center; margin-top: 8px;
+      font-family: var(--mono); font-size: 0.62rem;
+      color: var(--text3); text-align: center; opacity: 0.72;
+    }
+
     /* ─── Model dropdown ─── */
     .model-dropdown {
       position: absolute; bottom: calc(100% + 8px); left: 0; right: 0;
@@ -380,8 +438,9 @@
     /* ─── Mobile header (hidden on desktop) ─── */
     .mob-header {
       display: none; align-items: center;
-      padding: 0 12px;
-      height: 54px; flex-shrink: 0;
+      padding: env(safe-area-inset-top, 0px) 12px 0;
+      min-height: calc(54px + env(safe-area-inset-top, 0px));
+      flex-shrink: 0;
       border-bottom: 1px solid var(--border);
       background: rgba(15,15,18,0.95);
       backdrop-filter: blur(16px);
@@ -409,6 +468,7 @@
     @media (max-width: 768px) {
       .sidebar {
         position: fixed; left: 0; top: 0; bottom: 0; z-index: 20;
+        height: 100vh; height: 100dvh;
         transform: translateX(-100%);
         transition: transform 0.26s cubic-bezier(0.4,0,0.2,1);
         width: 280px !important;
@@ -438,12 +498,31 @@
       .messages { padding: 16px 14px 8px; gap: 18px; }
       .msg-body { font-size: 0.93rem; }
 
-      .quick-chips { display: none !important; }
+      .quick-chips {
+        flex-wrap: nowrap; justify-content: flex-start;
+        overflow-x: auto; padding-bottom: 2px;
+      }
+      .chip { flex: 0 0 auto; }
+      .cost-note { font-size: 0.58rem; }
 
       /* Composer */
       .composer-wrap {
         padding: 6px 12px;
         padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+      }
+      .composer-toolbar { gap: 5px; padding: 7px 8px 9px; }
+      .model-pill {
+        width: 34px; height: 34px; padding: 0; justify-content: center;
+        border-radius: 9px;
+      }
+      .model-pill-name,
+      .model-pill svg:last-child,
+      .toolbar-pill .pill-label {
+        display: none;
+      }
+      .toolbar-pill {
+        width: 34px; height: 34px; padding: 0; justify-content: center;
+        border-radius: 9px;
       }
       textarea#question { font-size: 16px; } /* prevent iOS zoom */
       #send { width: 38px; height: 38px; border-radius: 10px; }
@@ -475,6 +554,7 @@
       .chat-delete { opacity: 0.6 !important; }
       .chat-item { padding: 8px 10px; }
       .chat-item-title { font-size: 0.85rem; }
+      .kb-card { margin-top: 8px; }
     }
 
     /* iOS safe area for home indicator */
@@ -619,6 +699,22 @@
       </button>
     </div>
 
+    <div class="kb-card" id="kb-card">
+      <div class="kb-card-head">
+        <span>Wissensbasis</span>
+        <button class="kb-refresh" id="kb-refresh" title="Status aktualisieren" aria-label="Wissensbasis aktualisieren">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 1-9 9 9.8 9.8 0 0 1-6.7-2.7"/><path d="M3 12a9 9 0 0 1 9-9 9.8 9.8 0 0 1 6.7 2.7"/><path d="M3 19v-5h5"/><path d="M21 5v5h-5"/></svg>
+        </button>
+      </div>
+      <div class="kb-stats">
+        <div class="kb-stat"><span class="kb-value" id="kb-docs">–</span><span class="kb-label">Dateien</span></div>
+        <div class="kb-stat"><span class="kb-value" id="kb-chunks">–</span><span class="kb-label">Abschnitte</span></div>
+      </div>
+      <div class="kb-files" id="kb-files"></div>
+      <div class="kb-updated" id="kb-updated">Zuletzt aktualisiert: –</div>
+      <div class="kb-hint">Durchsuche Firmendokumente mit belegbaren Quellen statt Dateien manuell zu öffnen.</div>
+    </div>
+
     <div class="sb-history" id="sb-history">
       <div class="hist-label">Chat-Verlauf</div>
       <div id="history-groups"></div>
@@ -658,8 +754,8 @@
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg>
         </button>
       </h1>
-      <p class="welcome-desc">KI-Assistent mit Zugriff auf Noxera Labs Dokumente. Stell allgemeine Fragen oder frag gezielt zu Projekten, Team und Services.</p>
-      <p class="welcome-by">von Noah Wilm &amp; Raphael Ghazaryan</p>
+      <p class="welcome-desc">Finde Antworten in Firmendokumenten, ohne Ordner, PDFs und alte Dateien manuell zu durchsuchen. Der Assistent nutzt eure Wissensbasis und zeigt Quellen direkt mit an.</p>
+      <p class="welcome-by">RAG-Demo von Noxera Labs</p>
     </div>
 
     <!-- Messages -->
@@ -686,6 +782,11 @@
                 <span class="pill-label">Datei</span>
               </button>
               <input type="file" id="file-input" accept=".pdf,.txt" style="display:none;" />
+              <button type="button" class="toolbar-pill" id="camera-btn" title="Dokument fotografieren und per OCR indexieren">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+                <span class="pill-label">Scan</span>
+              </button>
+              <input type="file" id="camera-input" accept="image/*" capture="environment" style="display:none;" />
               <button type="button" class="toolbar-pill" id="search-toggle-btn" title="Web-Suche aktivieren — Claude sucht live im Internet">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                 <span class="pill-label" id="search-label">Web</span>
@@ -699,12 +800,13 @@
         </div>
 
         <div class="quick-chips" id="quick-chips">
-          <button class="chip" data-q="Was bietet Noxera Labs an?">Über Noxera Labs</button>
-          <button class="chip" data-q="Wer ist Noah Wilm?">Wer ist Noah?</button>
-          <button class="chip" data-q="Wer ist Raphael Ghazaryan?">Wer ist Raphael?</button>
-          <button class="chip" data-q="Welche KI-Lösungen bietet Noxera Labs an?">KI-Lösungen</button>
-          <button class="chip" data-q="Wie kann ich Noxera Labs kontaktieren?">Kontakt</button>
+          <button class="chip" data-q="Welche Dokumente sind in der Wissensbasis und was steht darin?">Wissensbasis</button>
+          <button class="chip" data-q="Fasse Noxera Labs so zusammen, dass ein Geschäftsführer sofort versteht, warum das relevant ist.">Kurz-Pitch</button>
+          <button class="chip" data-q="Analysiere einen typischen Firmenprozess und zeige, wie ein RAG-System Dokumentensuche und Support verbessern kann.">Prozessanalyse</button>
+          <button class="chip" data-q="Welche KI-Lösungen bietet Noxera Labs an und welche wären für ein mittelständisches Unternehmen sinnvoll?">KI-Lösungen</button>
+          <button class="chip" data-q="Erstelle eine kurze Projektanfrage an Noxera Labs mit Ziel, Datenquellen, Integrationen und nächsten Schritten.">Anfrage vorbereiten</button>
         </div>
+        <div class="cost-note">Interner Hinweis: Claude-Tokens pro Antwort. Web & Scan bewusst aktivieren.</div>
       </div>
     </div>
   </div>
@@ -713,9 +815,9 @@
 <script>
 // ─── Models ───
 const MODELS = [
-  { id: 'claude-haiku-4-5-20251001', name: 'Haiku 4.5',  short: 'Haiku 4.5',  desc: 'Schnell & sparsam', icon: '⚡' },
+  { id: 'claude-haiku-4-5-20251001', name: 'Haiku 4.5',  short: 'Haiku 4.5',  desc: 'Schnell & günstig', icon: '⚡' },
   { id: 'claude-sonnet-4-6',         name: 'Sonnet 4.6', short: 'Sonnet 4.6', desc: 'Ausgewogen',         icon: '✦' },
-  { id: 'claude-opus-4-7',           name: 'Opus 4.7',   short: 'Opus 4.7',   desc: 'Leistungsstark',    icon: '◈' },
+  { id: 'claude-opus-4-7',           name: 'Opus 4.7',   short: 'Opus 4.7',   desc: 'Premium / teuer',    icon: '◈' },
 ];
 let selectedModel = localStorage.getItem('nx_model') || 'claude-sonnet-4-6';
 let webSearchEnabled = false;
@@ -753,6 +855,12 @@ const modelInner  = document.getElementById('model-dropdown-inner');
 const modelPill   = document.getElementById('model-pill-btn');
 const modelPillNm = document.getElementById('model-pill-name');
 const quickChips  = document.getElementById('quick-chips');
+const costNote    = document.querySelector('.cost-note');
+const kbDocs      = document.getElementById('kb-docs');
+const kbChunks    = document.getElementById('kb-chunks');
+const kbFiles     = document.getElementById('kb-files');
+const kbRefresh   = document.getElementById('kb-refresh');
+const kbUpdated   = document.getElementById('kb-updated');
 
 // ─── Helpers ───
 function esc(s) {
@@ -789,6 +897,46 @@ function citeHandlers(scope, srcEl) {
   });
 }
 function scrollBottom() { window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }); streamEl.scrollTop = streamEl.scrollHeight; }
+function formatUpdated(ts) {
+  if (!ts) return 'Zuletzt aktualisiert: –';
+  try {
+    return 'Zuletzt aktualisiert: ' + new Date(ts * 1000).toLocaleString('de-DE', {
+      day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit'
+    });
+  } catch {
+    return 'Zuletzt aktualisiert: –';
+  }
+}
+function showFeedback(message, ok = true) {
+  const fb = document.createElement('div');
+  fb.className = 'upload-feedback';
+  if (!ok) fb.style.cssText = 'background:rgba(248,113,113,0.07);border-color:rgba(248,113,113,0.2);color:var(--danger)';
+  fb.innerHTML = ok
+    ? `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>${message}`
+    : message;
+  compInner.appendChild(fb);
+  setTimeout(() => fb.remove(), 4800);
+}
+async function refreshKnowledgeStatus() {
+  try {
+    const res = await fetch('/knowledge');
+    if (!res.ok) throw new Error('Status nicht verfügbar');
+    const data = await res.json();
+    kbDocs.textContent = data.summary?.files ?? '0';
+    kbChunks.textContent = data.chunks_indexed ?? '0';
+    kbUpdated.textContent = formatUpdated(data.updated_at);
+    const files = data.files || [];
+    kbFiles.innerHTML = files.length
+      ? files.slice(0, 5).map(f => `<div class="kb-file" title="${esc(f.filename)}">${esc(f.filename)}</div>`).join('')
+      : '<div class="kb-file">Noch keine Dateien</div>';
+  } catch {
+    kbDocs.textContent = '–';
+    kbChunks.textContent = '–';
+    kbUpdated.textContent = 'Zuletzt aktualisiert: –';
+    kbFiles.innerHTML = '<div class="kb-file">Status nicht erreichbar</div>';
+  }
+}
+kbRefresh.addEventListener('click', refreshKnowledgeStatus);
 
 // ─── Model UI ───
 function getModel() { return MODELS.find(m => m.id === selectedModel) || MODELS[1]; }
@@ -809,6 +957,10 @@ function renderModelDropdown() {
   `).join('');
   modelInner.querySelectorAll('.model-opt').forEach(el => {
     el.addEventListener('click', () => {
+      if (el.dataset.id.includes('opus')) {
+        const ok = confirm('Opus ist das teuerste Modell. Für normale Demos reicht Sonnet oder Haiku meistens aus. Trotzdem auswählen?');
+        if (!ok) return;
+      }
       selectedModel = el.dataset.id;
       localStorage.setItem('nx_model', selectedModel);
       updateModelPill();
@@ -827,6 +979,10 @@ document.addEventListener('click', e => { if (!modelDrop.contains(e.target) && !
 const searchToggleBtn = document.getElementById('search-toggle-btn');
 const searchLabel = document.getElementById('search-label');
 searchToggleBtn.addEventListener('click', () => {
+  if (!webSearchEnabled) {
+    const ok = confirm('Web-Suche kann zusätzliche API-Kosten erzeugen. Für Dokumentensuche ist sie meistens nicht nötig. Aktivieren?');
+    if (!ok) return;
+  }
   webSearchEnabled = !webSearchEnabled;
   searchToggleBtn.classList.toggle('active', webSearchEnabled);
   searchLabel.textContent = webSearchEnabled ? 'Web ✓' : 'Web';
@@ -836,6 +992,8 @@ searchToggleBtn.addEventListener('click', () => {
 // ─── File upload ───
 const uploadBtn  = document.getElementById('upload-btn');
 const fileInput  = document.getElementById('file-input');
+const cameraBtn  = document.getElementById('camera-btn');
+const cameraInput = document.getElementById('camera-input');
 const compInner  = document.querySelector('.composer-inner');
 
 uploadBtn.addEventListener('click', () => fileInput.click());
@@ -849,22 +1007,50 @@ fileInput.addEventListener('change', async () => {
   try {
     const res  = await fetch('/upload', { method: 'POST', body: fd });
     const data = await res.json();
-    const fb   = document.createElement('div');
-    fb.className = 'upload-feedback';
     if (data.status === 'indexed') {
-      fb.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><strong>${esc(data.filename)}</strong> indexiert (${data.chunks} Abschnitte)`;
+      showFeedback(`<strong>${esc(data.filename)}</strong> gespeichert & indexiert (${data.chunks} Abschnitte)`);
+      refreshKnowledgeStatus();
     } else if (data.status === 'skipped') {
-      fb.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><strong>${esc(data.filename)}</strong> bereits vorhanden`;
+      showFeedback(`<strong>${esc(data.filename)}</strong> bereits vorhanden`);
     } else {
-      fb.style.cssText = 'background:rgba(248,113,113,0.07);border-color:rgba(248,113,113,0.2);color:var(--danger)';
-      fb.textContent = `Fehler: ${data.message || data.status}`;
+      showFeedback(`Fehler: ${esc(data.message || data.status)}`, false);
     }
-    compInner.appendChild(fb);
-    setTimeout(() => fb.remove(), 4000);
   } catch (err) {
     console.error('Upload error:', err);
+    showFeedback('Upload fehlgeschlagen.', false);
   } finally {
     uploadBtn.disabled = false;
+  }
+});
+
+cameraBtn.addEventListener('click', () => cameraInput.click());
+cameraInput.addEventListener('change', async () => {
+  const file = cameraInput.files[0];
+  if (!file) return;
+  cameraInput.value = '';
+  const ok = confirm('Dieses Bild wird mit Claude OCR verarbeitet und kostet API-Tokens. Text extrahieren und in die Wissensbasis aufnehmen?');
+  if (!ok) return;
+
+  const fd = new FormData();
+  fd.append('file', file);
+  cameraBtn.disabled = true;
+  showFeedback('Scan wird verarbeitet. Das kann kurz dauern.');
+  try {
+    const res = await fetch('/upload-image', { method: 'POST', body: fd });
+    const data = await res.json();
+    if (data.status === 'indexed') {
+      showFeedback(`<strong>${esc(data.filename)}</strong> per OCR gespeichert & indexiert (${data.chunks} Abschnitte)`);
+      refreshKnowledgeStatus();
+    } else if (data.status === 'skipped') {
+      showFeedback(`<strong>${esc(data.filename)}</strong> bereits vorhanden`);
+    } else {
+      showFeedback(`Scan: ${esc(data.message || data.status || 'Kein Text erkannt')}`, false);
+    }
+  } catch (err) {
+    console.error('Camera OCR error:', err);
+    showFeedback('Scan fehlgeschlagen.', false);
+  } finally {
+    cameraBtn.disabled = false;
   }
 });
 
@@ -941,6 +1127,7 @@ function loadChat(id) {
   currentChatId = id;
   welcomeEl.style.display = 'none';
   quickChips.style.display = 'none';
+  costNote.style.display = 'none';
   streamEl.style.display = 'flex';
   streamEl.innerHTML = '';
   for (const msg of chat.messages) {
@@ -972,6 +1159,7 @@ function startNewChat() {
   streamEl.innerHTML = '';
   welcomeEl.style.display = 'flex';
   quickChips.style.display = 'flex';
+  costNote.style.display = 'flex';
   inputEl.value = '';
   inputEl.style.height = 'auto';
   renderSidebar();
@@ -1043,6 +1231,7 @@ form.addEventListener('submit', async e => {
 
   welcomeEl.style.display = 'none';
   quickChips.style.display = 'none';
+  costNote.style.display = 'none';
   streamEl.style.display = 'flex';
 
   store.addMsg(currentChatId, { role: 'user', content: q });
@@ -1056,6 +1245,7 @@ form.addEventListener('submit', async e => {
   inputEl.disabled = true;
 
   let fullText = '', sourcesEl = null;
+  let responseSources = [];
 
   try {
     const res = await fetch('/query/stream', {
@@ -1084,7 +1274,8 @@ form.addEventListener('submit', async e => {
         if (!data) continue;
         let p; try { p = JSON.parse(data); } catch { continue; }
         if (ev === 'sources') {
-          sourcesEl = renderSources(botEl, p.sources || []);
+          responseSources = p.sources || [];
+          sourcesEl = renderSources(botEl, responseSources);
         } else if (ev === 'status') {
           bodyEl.innerHTML = `<span class="status-msg"><span class="status-dot"></span>${esc(p.text || '')}</span>`;
         } else if (ev === 'token') {
@@ -1097,7 +1288,7 @@ form.addEventListener('submit', async e => {
         } else if (ev === 'done') {
           bodyEl.innerHTML = renderMessage(fullText);
           citeHandlers(bodyEl, sourcesEl);
-          store.addMsg(currentChatId, { role: 'bot', content: fullText, sources: sourcesEl ? (store.get(currentChatId)?.messages.at(-2)?.sources || []) : [] });
+          store.addMsg(currentChatId, { role: 'bot', content: fullText, sources: responseSources });
         }
       }
     }
@@ -1114,6 +1305,7 @@ form.addEventListener('submit', async e => {
 // ─── Init ───
 updateModelPill();
 renderSidebar();
+refreshKnowledgeStatus();
 inputEl.focus();
 </script>
 </body>

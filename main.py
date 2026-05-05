@@ -8,9 +8,11 @@ import hashlib
 import io
 import json
 import os
+import re
+import base64
 from contextlib import asynccontextmanager
 from pathlib import Path
-from typing import AsyncIterator
+from typing import AsyncIterator, Optional
 
 import anthropic
 import chromadb
@@ -32,6 +34,33 @@ DOCS_DIR = Path("./docs")
 DOCS_DIR.mkdir(parents=True, exist_ok=True)
 
 STATIC_DIR = Path("./static")
+APP_VERSION = "4.2.0"
+RAG_MIN_RELEVANCE = float(os.getenv("RAG_MIN_RELEVANCE", "0.18"))
+MAX_RESPONSE_TOKENS = int(os.getenv("MAX_RESPONSE_TOKENS", "1600"))
+MAX_RETRIEVAL_RESULTS = int(os.getenv("MAX_RETRIEVAL_RESULTS", "5"))
+MAX_QUESTION_CHARS = int(os.getenv("MAX_QUESTION_CHARS", "4000"))
+MAX_UPLOAD_BYTES = int(os.getenv("MAX_UPLOAD_BYTES", str(12 * 1024 * 1024)))
+MAX_IMAGE_UPLOAD_BYTES = int(os.getenv("MAX_IMAGE_UPLOAD_BYTES", str(6 * 1024 * 1024)))
+OCR_MODEL = os.getenv("ANTHROPIC_OCR_MODEL", "claude-haiku-4-5-20251001")
+IMAGE_MEDIA_TYPES = {
+    ".jpg": "image/jpeg",
+    ".jpeg": "image/jpeg",
+    ".png": "image/png",
+    ".webp": "image/webp",
+}
+
+
+def env_list(name: str, default: str = "") -> list[str]:
+    value = os.getenv(name, default)
+    return [item.strip() for item in value.split(",") if item.strip()]
+
+
+ALLOWED_MODELS = set(
+    env_list(
+        "ALLOWED_MODELS",
+        "claude-haiku-4-5-20251001,claude-sonnet-4-6,claude-opus-4-7",
+    )
+)
 
 # ──────────────────────────────────────────────
 # ChromaDB
@@ -91,6 +120,41 @@ def extract_pdf_text(content: bytes) -> str:
 
 def file_hash(content: bytes) -> str:
     return hashlib.sha256(content).hexdigest()[:16]
+
+
+def safe_filename(filename: str) -> str:
+    name = Path(filename or "upload").name
+    stem = re.sub(r"[^A-Za-z0-9._-]+", "-", Path(name).stem).strip(".-") or "upload"
+    suffix = Path(name).suffix.lower()
+    return f"{stem}{suffix}"
+
+
+def docs_summary() -> dict:
+    files = sorted(DOCS_DIR.rglob("*.pdf")) + sorted(DOCS_DIR.rglob("*.txt"))
+    return {
+        "files": len(files),
+        "pdfs": sum(1 for f in files if f.suffix.lower() == ".pdf"),
+        "txts": sum(1 for f in files if f.suffix.lower() == ".txt"),
+    }
+
+
+def docs_payload() -> dict:
+    files = sorted(DOCS_DIR.rglob("*.pdf")) + sorted(DOCS_DIR.rglob("*.txt"))
+    updated_at = max((f.stat().st_mtime for f in files), default=None)
+    return {
+        "summary": docs_summary(),
+        "chunks_indexed": collection.count(),
+        "updated_at": updated_at,
+        "files": [
+            {
+                "filename": f.name,
+                "type": f.suffix.lower().lstrip("."),
+                "size_bytes": f.stat().st_size,
+                "source_path": str(f.relative_to(DOCS_DIR)),
+            }
+            for f in files
+        ],
+    }
 
 
 def _index_text(filename: str, text: str, source_path: str = "") -> tuple[str, int]:
@@ -186,11 +250,13 @@ async def lifespan(_app: FastAPI):
 # ──────────────────────────────────────────────
 # App
 # ──────────────────────────────────────────────
-app = FastAPI(title="Noxera Labs AI Chat", version="4.1.0", lifespan=lifespan)
+app = FastAPI(title="Noxera Labs AI Chat", version=APP_VERSION, lifespan=lifespan)
+
+cors_origins = env_list("CORS_ORIGINS", "*")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=cors_origins,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -202,7 +268,7 @@ app.add_middleware(
 class QueryRequest(BaseModel):
     question: str
     n_results: int = 5
-    model: str | None = None
+    model: Optional[str] = None
     web_search: bool = False
 
 
@@ -222,6 +288,9 @@ def retrieve(question: str, n_results: int) -> tuple[list[str], list[dict], list
     seen: set = set()
     out_chunks, out_metas, out_dists = [], [], []
     for chunk, m, d in zip(chunks, metas, dists):
+        relevance = 1 - d
+        if relevance < RAG_MIN_RELEVANCE:
+            continue
         key = (m.get("filename"), m.get("chunk_index"))
         if key in seen:
             continue
@@ -258,22 +327,82 @@ def sse(event: str, data: dict) -> bytes:
     return f"event: {event}\ndata: {json.dumps(data, ensure_ascii=False)}\n\n".encode()
 
 
+def text_from_response(resp) -> str:
+    parts = []
+    for block in getattr(resp, "content", []) or []:
+        if getattr(block, "type", "") == "text":
+            parts.append(getattr(block, "text", ""))
+    return "".join(parts)
+
+
+def request_error(req: QueryRequest) -> Optional[str]:
+    if not req.question.strip():
+        return "Bitte gib eine Frage ein."
+    if len(req.question) > MAX_QUESTION_CHARS:
+        return f"Die Frage ist zu lang. Limit: {MAX_QUESTION_CHARS} Zeichen."
+    if req.model and req.model not in ALLOWED_MODELS:
+        return "Dieses Modell ist für diese Demo nicht freigegeben."
+    return None
+
+
+def model_for(req: QueryRequest) -> str:
+    return req.model or DEFAULT_MODEL
+
+
+async def extract_text_from_image(content: bytes, media_type: str) -> str:
+    b64 = base64.b64encode(content).decode("ascii")
+    response = await anthropic_client.messages.create(
+        model=OCR_MODEL,
+        max_tokens=1200,
+        system=(
+            "Du extrahierst Text aus Dokumentenfotos für ein RAG-System. "
+            "Gib nur den erkannten Text zurück. Erfinde keine Inhalte. "
+            "Wenn kaum Text erkennbar ist, schreibe: KEIN_TEXT_ERKANNT."
+        ),
+        messages=[
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "image",
+                        "source": {
+                            "type": "base64",
+                            "media_type": media_type,
+                            "data": b64,
+                        },
+                    },
+                    {
+                        "type": "text",
+                        "text": "Extrahiere den sichtbaren Text aus diesem Bild möglichst vollständig.",
+                    },
+                ],
+            }
+        ],
+    )
+    return text_from_response(response).strip()
+
+
 # ──────────────────────────────────────────────
 # Routes
 # ──────────────────────────────────────────────
 @app.post("/query/stream")
 async def query_stream(req: QueryRequest):
-    model = req.model or DEFAULT_MODEL
-    chunks, metadatas, distances = retrieve(req.question, req.n_results)
+    err = request_error(req)
+    model = model_for(req)
+    n_results = max(1, min(req.n_results, MAX_RETRIEVAL_RESULTS))
+    chunks, metadatas, distances = retrieve(req.question, n_results) if not err else ([], [], [])
 
     async def event_generator() -> AsyncIterator[bytes]:
+        if err:
+            yield sse("error", {"message": err})
+            return
         if chunks:
             yield sse("sources", {"sources": sources_payload(metadatas, distances)})
 
         try:
             stream_kwargs: dict = dict(
                 model=model,
-                max_tokens=2048,
+                max_tokens=MAX_RESPONSE_TOKENS,
                 system=SYSTEM_PROMPT,
                 messages=build_messages(req.question, chunks, metadatas),
             )
@@ -295,9 +424,37 @@ async def query_stream(req: QueryRequest):
     )
 
 
+@app.post("/query")
+async def query(req: QueryRequest):
+    err = request_error(req)
+    if err:
+        return JSONResponse({"status": "error", "message": err}, status_code=400)
+    model = model_for(req)
+    n_results = max(1, min(req.n_results, MAX_RETRIEVAL_RESULTS))
+    chunks, metadatas, distances = retrieve(req.question, n_results)
+    stream_kwargs: dict = dict(
+        model=model,
+        max_tokens=MAX_RESPONSE_TOKENS,
+        system=SYSTEM_PROMPT,
+        messages=build_messages(req.question, chunks, metadatas),
+    )
+    if req.web_search:
+        stream_kwargs["tools"] = [{"type": "web_search_20260209", "name": "web_search"}]
+
+    try:
+        response = await anthropic_client.messages.create(**stream_kwargs)
+        return {
+            "answer": text_from_response(response),
+            "sources": sources_payload(metadatas, distances) if chunks else [],
+            "model": model,
+        }
+    except Exception as e:
+        return JSONResponse({"status": "error", "message": str(e)}, status_code=500)
+
+
 @app.post("/upload")
 async def upload_document(file: UploadFile = File(...)):
-    filename = file.filename or "upload"
+    filename = safe_filename(file.filename or "upload")
     suffix = Path(filename).suffix.lower()
     if suffix not in (".pdf", ".txt"):
         return JSONResponse(
@@ -305,6 +462,11 @@ async def upload_document(file: UploadFile = File(...)):
             status_code=400,
         )
     content = await file.read()
+    if len(content) > MAX_UPLOAD_BYTES:
+        return JSONResponse(
+            {"status": "error", "message": "Datei ist zu groß für diese Demo"},
+            status_code=413,
+        )
     if suffix == ".pdf":
         text = extract_pdf_text(content)
         if not text:
@@ -314,13 +476,81 @@ async def upload_document(file: UploadFile = File(...)):
         if not text:
             return {"status": "empty", "chunks": 0, "filename": filename}
 
-    status, n = _index_text(filename, text)
-    return {"status": status, "chunks": n, "filename": filename}
+    content_hash = file_hash(content)
+    stored_name = f"{Path(filename).stem}--{content_hash}{suffix}"
+    stored_path = DOCS_DIR / stored_name
+    if not stored_path.exists():
+        stored_path.write_bytes(content)
+
+    status, n = _index_text(stored_name, text, stored_name)
+    return {
+        "status": status,
+        "chunks": n,
+        "filename": stored_name,
+        "stored": True,
+    }
+
+
+@app.post("/upload-image")
+async def upload_image(file: UploadFile = File(...)):
+    filename = safe_filename(file.filename or "scan.jpg")
+    suffix = Path(filename).suffix.lower()
+    media_type = IMAGE_MEDIA_TYPES.get(suffix)
+    if not media_type:
+        return JSONResponse(
+            {"status": "error", "message": "Nur JPG, PNG und WEBP werden unterstützt"},
+            status_code=400,
+        )
+
+    content = await file.read()
+    if len(content) > MAX_IMAGE_UPLOAD_BYTES:
+        return JSONResponse(
+            {"status": "error", "message": "Bild ist zu groß für die OCR-Demo"},
+            status_code=413,
+        )
+
+    try:
+        text = await extract_text_from_image(content, media_type)
+    except Exception as e:
+        return JSONResponse({"status": "error", "message": f"OCR fehlgeschlagen: {e}"}, status_code=500)
+
+    if not text or text.upper().startswith("KEIN_TEXT_ERKANNT"):
+        return {"status": "empty", "chunks": 0, "filename": filename, "message": "Kein lesbarer Text erkannt"}
+
+    content_hash = file_hash(content)
+    stored_name = f"{Path(filename).stem}--scan--{content_hash}.txt"
+    stored_path = DOCS_DIR / stored_name
+    stored_path.write_text(
+        f"Quelle: Kamerascan aus {filename}\n\n{text}",
+        encoding="utf-8",
+    )
+    status, n = _index_text(stored_name, stored_path.read_text(encoding="utf-8"), stored_name)
+    return {
+        "status": status,
+        "chunks": n,
+        "filename": stored_name,
+        "stored": True,
+        "ocr_model": OCR_MODEL,
+    }
 
 
 @app.get("/health")
 async def health():
-    return {"status": "ok", "chunks_indexed": collection.count(), "version": "4.1.0"}
+    return {
+        "status": "ok",
+        "chunks_indexed": collection.count(),
+        "docs": docs_summary(),
+        "model": DEFAULT_MODEL,
+        "rag_min_relevance": RAG_MIN_RELEVANCE,
+        "max_response_tokens": MAX_RESPONSE_TOKENS,
+        "max_retrieval_results": MAX_RETRIEVAL_RESULTS,
+        "version": APP_VERSION,
+    }
+
+
+@app.get("/knowledge")
+async def knowledge_status():
+    return docs_payload()
 
 
 @app.post("/admin/reindex")

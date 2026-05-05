@@ -11,6 +11,8 @@ data/
 
 # Local PDFs — production sources live in the docker volume
 docs/*.pdf
+docs/*--*.txt
+docs/*--scan--*.txt
 
 # Editor
 .vscode/

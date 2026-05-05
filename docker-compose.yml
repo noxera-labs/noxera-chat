@@ -7,10 +7,21 @@ services:
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
       - ANTHROPIC_MODEL=${ANTHROPIC_MODEL:-claude-sonnet-4-6}
       - SYSTEM_PROMPT=${SYSTEM_PROMPT}
+      - CORS_ORIGINS=${CORS_ORIGINS:-*}
+      - RAG_MIN_RELEVANCE=${RAG_MIN_RELEVANCE:-0.18}
+      - MAX_RESPONSE_TOKENS=${MAX_RESPONSE_TOKENS:-1600}
+      - MAX_RETRIEVAL_RESULTS=${MAX_RETRIEVAL_RESULTS:-5}
+      - MAX_UPLOAD_BYTES=${MAX_UPLOAD_BYTES:-12582912}
+      - MAX_IMAGE_UPLOAD_BYTES=${MAX_IMAGE_UPLOAD_BYTES:-6291456}
+      - ANTHROPIC_OCR_MODEL=${ANTHROPIC_OCR_MODEL:-claude-haiku-4-5-20251001}
+      - ALLOWED_MODELS=${ALLOWED_MODELS:-claude-haiku-4-5-20251001,claude-sonnet-4-6,claude-opus-4-7}
     volumes:
       - chroma-data:/app/data
+      - docs-data:/app/docs
     restart: unless-stopped
 
 volumes:
   chroma-data:
+    driver: local
+  docs-data:
     driver: local

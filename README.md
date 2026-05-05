@@ -47,13 +47,20 @@ uvicorn main:app --reload --port 8000
    - `ANTHROPIC_API_KEY=sk-ant-...`
    - Optional: `ANTHROPIC_MODEL=claude-sonnet-4-20250514`
    - Optional: `SYSTEM_PROMPT="…"` für kundenspezifisches Verhalten
+   - Optional: `CORS_ORIGINS=https://kunde.de,https://demo.kunde.de`
+   - Optional: `RAG_MIN_RELEVANCE=0.18` als Mindestscore für Dokumenttreffer
+   - Optional: `MAX_RESPONSE_TOKENS=1600` als Kostenlimit pro Antwort
+   - Optional: `MAX_RETRIEVAL_RESULTS=5` als Limit für RAG-Kontext
+   - Optional: `ANTHROPIC_OCR_MODEL=claude-haiku-4-5-20251001` für Kamera/OCR
+   - Optional: `ALLOWED_MODELS=claude-haiku-4-5-20251001,claude-sonnet-4-6`
 3. **Persistent Storage konfigurieren** (kritisch — sonst gehen Daten beim Redeploy verloren):
    - `/app/data` → persistentes Volume (ChromaDB Index)
    - `/app/docs` → persistentes Volume (PDF-Quellen)
 4. Port `8000` exponieren
 
-PDFs in das `docs/`-Volume kopieren (z.B. via Coolify-Terminal oder SCP), dann
-`POST /admin/reindex` aufrufen — fertig.
+PDFs/TXTs können entweder in das `docs/`-Volume kopiert werden (z.B. via
+Coolify-Terminal oder SCP) oder direkt über die Chat-UI hochgeladen werden. Danach
+bei manuellen Dateiänderungen `POST /admin/reindex` aufrufen.
 
 ## API
 
@@ -61,8 +68,20 @@ PDFs in das `docs/`-Volume kopieren (z.B. via Coolify-Terminal oder SCP), dann
 |--------|-------------------|-------------------------------------------|
 | `POST` | `/query/stream`   | RAG-Anfrage mit SSE-Streaming             |
 | `POST` | `/query`          | Synchroner Fallback (komplette Antwort)   |
+| `POST` | `/upload`         | PDF/TXT dauerhaft speichern und indexieren |
+| `POST` | `/upload-image`   | JPG/PNG/WEBP per Claude OCR als TXT indexieren |
+| `GET`  | `/knowledge`      | Dokumentliste + Chunk-Status für die UI    |
 | `POST` | `/admin/reindex`  | `docs/` neu scannen (idempotent)          |
-| `GET`  | `/health`         | Status + Chunk-Count                      |
+| `GET`  | `/health`         | Status, Chunk-Count, Docs-Count, Modell   |
+
+## Demo-Features
+
+- **Wissensbasis-Status** in der Sidebar: Dateien, Chunks und Dateinamen.
+- **Demo-Fragen** unter dem Eingabefeld für gute Kundengespräche.
+- **Kamera/Scan**: Bilder werden erst nach Bestätigung mit Claude OCR verarbeitet,
+  als TXT gespeichert und anschließend indexiert. Das verbraucht API-Tokens.
+- **Kostenkontrolle** über Antwortlänge, erlaubte Modelle, Retrieval-Limit und
+  günstiges OCR-Modell.
 
 ## Customization pro Kunde
 

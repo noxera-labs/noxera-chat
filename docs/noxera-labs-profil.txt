@@ -1,114 +1,335 @@
-NOXERA LABS — UNTERNEHMENSPROFIL
-=================================
+NOXERA LABS - AKTUALISIERTES UNTERNEHMENSPROFIL UND WEBSITE-WISSEN
+===================================================================
 
-ÜBER NOXERA LABS
------------------
-Noxera Labs ist ein unabhängiges Softwareentwicklungsstudio aus Hamburg, Deutschland.
-Slogan: "Apps, Web & KI aus einer Hand — von Hamburg für Deutschland"
-
-Das Unternehmen entwickelt Apps (iOS, Android, React Native), Webseiten (React, Next.js)
-und KI-Lösungen (Voice Agenten, KI-Automatisierung, RAG-Systeme, KI-Agenten).
-Noxera Labs gilt als eines der führenden KI- und App-Entwicklungsstudios in Hamburg und Deutschland.
-
-Gründungsjahr: 2020
-Standort: Hamburg, Deutschland (arbeitet remote für Kunden in der DACH-Region und weltweit)
-Teamgröße: 2 Mitgründer
-Kontakt: info@noxera-labs.de
-Website: https://noxera-labs.de
-Social Media: @noxeralabs (Instagram, TikTok), LinkedIn: company/noxera-labs, GitHub: noxera-labs
+Quelle und Aktualisierung
+-------------------------
+Quelle: https://noxera-labs.de/
+Ergänzende Website-Routen laut Sitemap: /works, /apps, /contact, /blog,
+/anfragen, /onboarding, /app-anfrage, /termin sowie Blog-Artikel zu
+App-Entwicklung Hamburg, KI-Agentur Deutschland und KI-Automatisierung Hamburg.
+Stand dieser Wissensdatei: 2026-05-05.
 
 
-DAS TEAM
---------
+Kurzprofil
+----------
+Noxera Labs ist ein unabhängiges Software- und KI-Entwicklungsstudio aus
+Hamburg, Deutschland. Das Studio entwickelt digitale Systeme für reale
+Nutzung im Betrieb: Mobile Apps, Web-Plattformen, Websites, KI-Agenten,
+Voice-Assistenten, RAG-Systeme, Automatisierungen und industrielle KI-Lösungen.
 
-Noah Wilm — Co-Founder & Web/AI Developer
-Noah Wilm ist Mitgründer von Noxera Labs und verantwortet Web-Entwicklung sowie
-KI-Integration. Seine Expertise umfasst: Web Development, TypeScript, React, Next.js,
-AI Integration, Python, LLM APIs, RAG Systems, Voice AI und KI-Automatisierung.
-Noah ist der Ansprechpartner für alle Fragen rund um Webprojekte und KI-Lösungen.
+Positionierung:
+- Apps, Web und KI aus einer Hand.
+- KI, Apps und Systeme für echten Betrieb.
+- Digitale Systeme, die Teams im Alltag wirklich benutzen.
+- Fokus auf Geschwindigkeit, klare Kommunikation, Produktstrategie, Design,
+  User Experience und technisch belastbare Umsetzung.
 
-Raphael Ghazaryan — Co-Founder & Mobile Developer
-Raphael Ghazaryan ist Mitgründer von Noxera Labs und verantwortet die Mobile-Entwicklung.
-Seine Expertise umfasst: iOS Development, Android Development, React Native, Mobile UX,
-Swift, Kotlin und App Store Deployment.
-Raphael ist der Ansprechpartner für alle Fragen rund um App-Entwicklung.
+Noxera Labs arbeitet remote für Kunden in Deutschland, Österreich, der Schweiz
+und international. Die Kommunikation ist auf Deutsch und Englisch möglich.
 
-
-LEISTUNGEN & SERVICES
-----------------------
-
-1. App Entwicklung
-   Native & Cross-Platform Apps für iOS und Android. Performante Mobile Apps von
-   der UX bis zum Store-Release.
-   Technologien: Swift, Kotlin, React Native
-   Ansprechpartner: Raphael Ghazaryan
-
-2. Web Entwicklung
-   Performante Websites und komplexe Web-Apps mit React, Next.js und TypeScript.
-   Technologien: React, Next.js, TypeScript, Node.js
-   Ansprechpartner: Noah Wilm
-
-3. KI Automatisierung & KI-Lösungen
-   Intelligente Automatisierung, Voice-Assistenten und KI-Agenten.
-   LLM Integration, RAG-Systeme und KI-gestützte Business-Prozesse.
-   Technologien: LLM Integration (Claude, OpenAI), RAG-Systeme, Voice Agents,
-   KI-Automatisierung, Python, ChromaDB
-   Ansprechpartner: Noah Wilm
+Kontakt:
+- Website: https://noxera-labs.de
+- E-Mail: info@noxera-labs.de
+- Social: Instagram @noxeralabs, TikTok @noxeralabs, LinkedIn company/noxera-labs,
+  GitHub noxera-labs
 
 
-TECHNOLOGIE-STACK
------------------
-Mobile: Swift, Kotlin, React Native
-Frontend: React, Next.js, TypeScript
-Backend: FastAPI (Python), Node.js
-Datenbanken: PostgreSQL, ChromaDB (Vektordatenbank)
-KI/ML: Claude (Anthropic), OpenAI, LLM APIs, RAG-Systeme, Voice AI
-Infrastruktur: Hetzner Cloud, Docker, Coolify
-Design: Figma, moderne UI/UX-Prinzipien
-
-
-HÄUFIGE FRAGEN (FAQ)
---------------------
-
-Frage: Was bietet Noxera Labs an?
-Antwort: Noxera Labs bietet App-Entwicklung (iOS & Android), Web-Entwicklung,
-KI-Automatisierung, Voice-Assistenten, KI-Agenten und die Entwicklung eigener
-digitaler Produkte. Wir sind ein Full-Service-Studio aus Deutschland.
-
-Frage: Wo ist Noxera Labs ansässig?
-Antwort: Noxera Labs ist ein Softwareentwicklungsstudio aus Hamburg, Deutschland,
-und arbeitet remote für Kunden in der DACH-Region und weltweit.
-
-Frage: Wie kann ich Noxera Labs kontaktieren?
-Antwort: Per E-Mail unter info@noxera-labs.de oder über das Kontaktformular
-auf der Website noxera-labs.de.
-
-Frage: Welche Technologien verwendet Noxera Labs?
-Antwort: Swift, Kotlin, React Native für Apps; React, Next.js, TypeScript, Node.js
-für Web; sowie LLM Integration, RAG, Voice Agents und Automatisierung für KI-Projekte.
-
-Frage: Wer ist Noah Wilm?
-Antwort: Noah Wilm ist Co-Founder von Noxera Labs und spezialisiert auf Web-Entwicklung
-und KI-Integration. Er verantwortet Webprojekte, KI-Lösungen, RAG-Systeme und LLM-APIs.
-
-Frage: Wer ist Raphael Ghazaryan?
-Antwort: Raphael Ghazaryan ist Co-Founder von Noxera Labs und spezialisiert auf
-Mobile-Entwicklung. Er verantwortet iOS- und Android-Apps sowie React Native Projekte.
-
-Frage: Wie viel kostet ein Projekt bei Noxera Labs?
-Antwort: Noxera Labs arbeitet im Premium-Preissegment (€€€). Für ein individuelles
-Angebot bitte Kontakt über info@noxera-labs.de aufnehmen.
-
-Frage: Arbeitet Noxera Labs auch international?
-Antwort: Ja, Noxera Labs arbeitet remote für Kunden in der DACH-Region (Deutschland,
-Österreich, Schweiz) und weltweit. Die Kommunikation erfolgt auf Deutsch und Englisch.
-
-
-WARUM NOXERA LABS?
+Studio-Philosophie
 ------------------
-- Deutsches Unternehmen: Verlässlichkeit, DSGVO-Konformität, direkte Kommunikation
-- KI-Expertise: Spezialisierung auf moderne LLM-Integrationen und RAG-Systeme
-- Full-Service: App, Web und KI aus einer Hand
-- Individuelle Lösungen: Maßgeschneiderte Entwicklung statt Standardprodukte
-- Moderner Stack: Aktuelle, zukunftssichere Technologien
-- Transparenz: Offene Kommunikation über Prozesse, Kosten und Zeitpläne
+Noxera Labs beschreibt sich als kleines, unabhängiges Entwicklerstudio ohne
+unnötigen Agentur-Overhead. Kunden sprechen direkt mit den Entwicklern, die das
+Produkt bauen. Die Website betont klare Kommunikation, schnelle Entscheidungen
+und die Betrachtung eines Produkts als Ganzes: Positionierung, Design,
+Entwicklung, Launch und Betrieb gehören zusammen.
+
+Neben Kundenprojekten entwickelt Noxera Labs eigene Produkte. Das soll das
+Studio nah an echten Märkten, echten Nutzern und realen Release-Zyklen halten.
+Eigene Apps, Tools und KI-Produkte dienen auch dazu, Prozesse und Ideen praktisch
+zu testen.
+
+
+Team
+----
+Noxera Labs besteht aus zwei Co-Foundern.
+
+Raphael Ghazaryan
+- Rolle laut aktueller Website: AI Developer & Co-Founder.
+- Hintergrund: mehr als sieben Jahre Enterprise-IT-Erfahrung, unter anderem von
+  Airbus bis AstraZeneca.
+- Fokus: LLM-gestützte Web- und App-Lösungen, skalierbare Systeme, Swift,
+  Kotlin, React Native und UI/UX.
+- Auf der Website wird Raphael auch als Autor des App-Entwicklung-Hamburg-Guides
+  genannt.
+
+Noah Wilm
+- Rolle: Co-Founder, Web & AI.
+- Fokus: Full-Stack-Entwicklung, performante Webanwendungen, KI-Integration,
+  skalierbare Systeme, TypeScript, React, Python und AI/ML.
+- Auf der Website wird Noah als Autor von KI-bezogenen Blog-Guides genannt.
+
+
+Leistungen
+----------
+1. App-Entwicklung
+Noxera Labs entwickelt native und cross-platform Apps für iOS und Android.
+Leistungsumfang: Produktkonzept, UX/UI, technische Umsetzung, Backend-Anbindung,
+App-Store-Release, Wartung und Weiterentwicklung.
+
+Technologien und Ansätze:
+- Swift für iOS.
+- Kotlin für Android.
+- React Native für Cross-Platform Apps.
+- Native Entwicklung ist sinnvoll, wenn maximale Performance, spezielle
+  Plattformfunktionen, AR, Spiele oder komplexe Animationen zentral sind.
+- React Native ist für viele Business-Apps sinnvoll, wenn iOS und Android mit
+  einer Codebase, hoher Geschwindigkeit und effizienteren Kosten umgesetzt werden
+  sollen.
+
+Noxera Labs verweist im App-Kontext auch auf eigene App-Erfahrung, darunter
+"Magic Towers" als eigenes Spiel im App Store.
+
+
+2. Web-Entwicklung
+Noxera Labs entwickelt performante Websites, Web-Apps und digitale Produkte.
+Die Website betont klare Positionierung, hochwertige Oberfläche,
+technische Sauberkeit, Conversion und Vertrauen statt nur schöner Optik.
+
+Typische Web-Projekte:
+- Unternehmenswebsite oder Relaunch.
+- Web-App mit komplexerer Logik.
+- Plattform oder browserbasiertes Produkt.
+- Landingpages und B2B-Websysteme für erklärungsbedürftige Leistungen.
+
+Technologien:
+- React.
+- Next.js.
+- TypeScript.
+- Node.js.
+- Moderne Frontend- und UX-Systeme.
+
+
+3. KI-Automatisierung und KI-Lösungen
+Noxera Labs entwickelt KI-Systeme für operative Teams, digitale Produkte und
+industrielle Abläufe. Ziel sind Prozesse, die schneller, günstiger oder
+deutlich besser werden.
+
+Typische KI-Projekte:
+- KI-Agenten.
+- Voice-Assistenten und KI-Telefonagenten.
+- Interne Assistenzsysteme.
+- RAG-Systeme über Unternehmensdaten.
+- Automatisierte Workflows.
+- Systeme, die bestehende Tools und APIs mit KI-Logik verbinden.
+- Industrielle KI mit Anbindung an reale Prozesse und Bestandssysteme.
+
+Beispiele für beteiligte Systeme aus Anfrageformularen:
+- SAP.
+- HubSpot.
+- Microsoft 365.
+- Interne Tools.
+- Bestehende APIs und operative Systeme.
+
+Noxera Labs legt Wert auf Human-in-the-loop, Freigaben, Datenschutz,
+Integration in bestehende Workflows und eine fundierte Ersteinschätzung vor dem
+Bau.
+
+
+4. Industrial AI und Fertigung
+Die Website positioniert Noxera Labs auch im Bereich "KI für die Fertigung".
+Kernaussage: produktive KI statt Pilot-Friedhof.
+
+Mögliche Industrial-AI-Szenarien:
+- Kamerabasierte Qualitätsprüfung direkt an der Linie.
+- Erkennung von Defekten, Anomalien und Freigaben in Echtzeit.
+- Operative Agenten für Einkauf, Rückstände, Abstimmungen und nächste Schritte.
+- Verbindung von Kameras, Agenten und Bestandssystemen.
+- Entwicklung vom Proof of Concept bis in die Produktionslinie.
+
+
+Showcase- und Systembeispiele
+-----------------------------
+Die Website zeigt ausgewählte Systeme aus Web, App und operativem Betrieb. Diese
+Beispiele sind als repräsentative Oberflächen und Systemideen zu verstehen.
+
+Helicis Präzision
+- Kategorie: B2B-Websystem.
+- Ziel: Web-System für industrielle oder erklärungsbedürftige Leistungen.
+- Fokus: Lesbarkeit, Positionierung, Vertrauen und hochwertige Oberfläche bereits
+  im ersten Screen.
+
+Shift Companion
+- Kategorie: Mobile App.
+- Ziel: mobile Arbeitsoberfläche für operative Teams.
+- Fokus: Aufgaben, Status, nächste Schritte und schnelle Verständlichkeit im
+  laufenden Betrieb.
+- Stack-Signal: React Native, iOS, Android.
+
+Ops Cockpit
+- Kategorie: SaaS/Operations.
+- Ziel: operatives Steuerungssystem für Live-Übersicht, Disposition und laufende
+  Entscheidungen.
+- Fokus: Karte, Statuslogik, Priorisierung und Übersicht.
+
+Weitere Website-Signale:
+- Operativer Agent für Einkauf und Abstimmungen.
+- Industrial-AI-Systeme als zusammenhängende Produktoberflächen statt isolierte
+  Mockups.
+
+
+Anfrage- und Projektflows
+-------------------------
+Noxera Labs unterscheidet auf der Website mehrere Anfragewege:
+
+Allgemeine Anfrage
+- Für Fragen, erste Einschätzungen oder Gesprächsbedarf.
+- Noxera Labs gibt an, sich innerhalb von 24 Stunden zu melden.
+
+Website- und App-Anfrage
+- Für Websites, Web-Apps, mobile Apps und digitale Produkte.
+- Ziel: klare Positionierung, durchdachtes Design und belastbare technische
+  Umsetzung.
+- Der Fragebogen fragt unter anderem nach Produkttyp, Ziel, Nutzern,
+  Kernfunktionen, Budget, Zeitplan, Inspirationen und benötigten Integrationen.
+
+KI-Automatisierungsanfrage
+- Für Agenten, Assistenzsysteme, interne Automatisierung, RAG-Systeme,
+  industrielle KI und Integrationen in bestehende Systeme.
+- Der Fragebogen fragt unter anderem nach Use Case, Ziel, beteiligten Systemen,
+  Budget, Zeitplan, Freigabeprozessen und Human-in-the-loop.
+- Noxera Labs verspricht eine fundierte Ersteinschätzung.
+
+
+Blog-Wissen: App-Entwicklung Hamburg 2026
+-----------------------------------------
+Der App-Guide erklärt Kosten, Technologieentscheidungen und Auswahlkriterien für
+App-Entwicklung in Hamburg.
+
+Kostenrahmen laut Guide:
+- Einfache App / MVP für eine Plattform: ca. 15.000 bis 35.000 Euro.
+- Mittlere App für iOS und Android mit mehreren Features: ca. 35.000 bis
+  80.000 Euro.
+- Komplexes Full-Scale-Produkt: ca. 80.000 bis 200.000 Euro oder mehr.
+
+Einordnung:
+- Native Entwicklung mit Swift und Kotlin bietet maximale Performance, beste
+  Plattformintegration und volle Kontrolle, kostet aber mehr und dauert länger.
+- React Native ist für viele Business-Apps ein sinnvoller Weg, wenn beide
+  Plattformen schnell und effizient bedient werden sollen.
+- Der Guide empfiehlt, mit einem MVP zu starten, Feedback zu sammeln und danach
+  auszubauen.
+
+Worauf Kunden bei App-Entwicklern achten sollten:
+- Portfolio mit echten veröffentlichten Store-Apps.
+- Transparente Preisgestaltung nach Anforderungsanalyse.
+- Direkter Draht zu den Entwicklern.
+- DSGVO-Kompetenz.
+- Post-Launch-Support.
+- App Store und Google Play Review-Prozesse frühzeitig einplanen.
+- Bei App-Projekten sollte auch Budget für Marketing und App Store Optimization
+  eingeplant werden.
+
+
+Blog-Wissen: KI-Agentur Deutschland 2026
+----------------------------------------
+Der KI-Agentur-Guide unterscheidet zwischen No-Code-Integratoren und echten
+KI-Entwicklungsstudios.
+
+Noxera Labs empfiehlt bei der Auswahl eines KI-Partners auf folgende Punkte zu
+achten:
+- Kann der Anbieter LLM-APIs, RAG-Architekturen, Vektordatenbanken und Agenten
+  technisch erklären?
+- Entwickelt der Anbieter eigene Systeme oder verbindet er nur No-Code-Tools?
+- Gibt es Verständnis für Branche und Prozesskontext?
+- Gibt es DSGVO- und Datenschutzkompetenz?
+- Gibt es Support, Monitoring, Fine-Tuning und Updates nach dem Projekt?
+
+Kostenrahmen laut Guide:
+- KI-Beratung und Strategie über 1 bis 3 Tage: ca. 2.000 bis 8.000 Euro.
+- Einfacher KI-Agent oder Workflow-Automatisierung: ca. 8.000 bis 20.000 Euro.
+- RAG-System über Unternehmensdaten: ca. 15.000 bis 50.000 Euro.
+- Voice Assistant oder KI-Telefonagent: ca. 20.000 bis 60.000 Euro.
+- Komplexes Multi-Agenten-System: ca. 50.000 bis 150.000 Euro oder mehr.
+
+Technologieeinordnung laut Guide:
+- Claude ist stark bei langen Dokumenten, komplexem Reasoning, strukturierten
+  Outputs und RAG-/Analyse-Agenten.
+- GPT-4o beziehungsweise Azure OpenAI ist vielseitig und multimodal; Azure kann
+  für DSGVO-Anforderungen relevant sein.
+- Mistral oder LLaMA können für Self-Hosting und besonders sensible Daten
+  sinnvoll sein.
+- LangChain und LlamaIndex sind verbreitete Frameworks für RAG und Agenten.
+- n8n ist relevant für selbst hostbare Workflow-Automatisierung.
+- Pinecone, Weaviate und ChromaDB sind Beispiele für Vektordatenbanken.
+
+Zeitrahmen:
+- Ein erster nutzbarer KI-Prototyp kann in 2 bis 4 Wochen entstehen.
+- Ein produktionsreifes System dauert typischerweise 6 bis 16 Wochen, abhängig
+  von Komplexität und Integrationen.
+- Noxera Labs empfiehlt klein zu starten, schnell Feedback zu sammeln und dann
+  auszubauen.
+
+
+Blog-Wissen: KI-Automatisierung Hamburg 2026
+--------------------------------------------
+Der KI-Automatisierungs-Guide erklärt, welche Prozesse sich in Hamburger
+Unternehmen besonders lohnen und welche Formen von KI-Automatisierung es gibt.
+
+Grundformen:
+- Workflow-Automatisierung mit KI-Bausteinen, zum Beispiel mit n8n, Make oder
+  Zapier plus KI-Modulen.
+- KI-Agenten, die mehrstufige Entscheidungen und Ergebnisse vorbereiten.
+- RAG-Systeme, die KI-Modelle mit Unternehmensdaten verbinden, damit Antworten
+  aktueller und spezifischer werden.
+
+Lohnende Use Cases:
+- Kundensupport-Triage: Anfragen klassifizieren, Standardfragen beantworten,
+  komplexe Fälle eskalieren.
+- Dokumentenverarbeitung: Rechnungen, Verträge, Bestellungen und andere
+  strukturierte oder halbstrukturierte Dokumente auslesen.
+- Internes Wissensmanagement: Unternehmenswissen per Chat oder Assistent
+  zugänglich machen.
+- Angebotserstellung, E-Mail-Drafts und repetitive Backoffice-Prozesse.
+
+Einordnung:
+- Wenn ein Unternehmen täglich mehr als etwa zwei Stunden für repetitive,
+  regelbasierte Aufgaben verliert, lohnt sich eine Automatisierungsprüfung oft.
+- Die beste Umsetzung startet nicht mit dem komplexesten System, sondern mit dem
+  wertvollsten und klar abgrenzbaren Use Case.
+
+
+Datenschutz und DACH-Kontext
+----------------------------
+Noxera Labs positioniert sich als deutsches Studio mit Verständnis für DSGVO,
+DACH-Kommunikation, direkte Abstimmungen und kurze Reaktionszeiten. Für KI- und
+App-Projekte sind Datenschutz, Datenminimierung, Einwilligungen, sichere
+Datenhaltung, EU-konforme Anbieter und gegebenenfalls Self-Hosting wichtige
+Entscheidungspunkte.
+
+
+Häufige Fragen
+--------------
+Was bietet Noxera Labs an?
+Noxera Labs bietet App-Entwicklung, Web-Entwicklung, KI-Automatisierung,
+Voice-Assistenten, KI-Agenten, RAG-Systeme, industrielle KI und eigene digitale
+Produkte.
+
+Wo sitzt Noxera Labs?
+Noxera Labs sitzt in Hamburg, Deutschland, und arbeitet remote für Kunden in der
+DACH-Region und weltweit.
+
+Wie erreicht man Noxera Labs?
+Per E-Mail an info@noxera-labs.de oder über die Formulare auf
+https://noxera-labs.de.
+
+Wie schnell meldet sich Noxera Labs nach einer Anfrage?
+Die Website sagt, dass sich Noxera Labs innerhalb von 24 Stunden meldet.
+
+Was unterscheidet Noxera Labs von einer klassischen Agentur?
+Noxera Labs betont ein kleines Team, direkten Kontakt zu Entwicklern, wenig
+Overhead, schnelle Entscheidungen, Produktdenken und Umsetzung von Design bis
+Launch.
+
+Welche Technologien nutzt Noxera Labs?
+Swift, Kotlin, React Native, React, Next.js, TypeScript, Node.js, Python,
+LLM-APIs, RAG-Systeme, Voice AI, Automatisierung, Vektordatenbanken wie ChromaDB
+und moderne Cloud-/Deployment-Stacks.
