@@ -103,7 +103,7 @@
 
     .kb-card {
       margin: 0 8px 8px;
-      padding: 11px;
+      padding: 12px;
       border: 1px solid var(--border);
       border-radius: 8px;
       background: linear-gradient(180deg, rgba(0,207,255,0.07), rgba(255,255,255,0.025));
@@ -123,6 +123,19 @@
     .kb-refresh:hover { background: var(--adim); }
     .kb-actions { display: flex; align-items: center; gap: 5px; }
     .kb-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
+    .kb-ready {
+      display: flex; align-items: center; gap: 8px;
+      color: var(--text); font-size: 0.82rem; font-weight: 600;
+    }
+    .kb-ready-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--green); box-shadow: 0 0 10px rgba(34,197,94,0.42);
+      flex-shrink: 0;
+    }
+    .kb-ready.muted { color: var(--text2); }
+    .kb-ready.muted .kb-ready-dot {
+      background: var(--text3); box-shadow: none;
+    }
     .kb-stat {
       padding: 7px 8px; border-radius: 7px;
       background: rgba(255,255,255,0.035); border: 1px solid var(--border);
@@ -170,6 +183,11 @@
       margin-top: 8px; color: var(--text3); font-size: 0.68rem;
       line-height: 1.45;
     }
+    .kb-admin {
+      display: none;
+      margin-top: 8px;
+    }
+    .kb-card.admin-open .kb-admin { display: block; }
     .kb-links {
       display: flex; gap: 6px; margin-top: 8px;
     }
@@ -230,6 +248,38 @@
       flex: 1; display: flex; flex-direction: column;
       height: 100vh; height: 100dvh; overflow: hidden; min-width: 0;
       position: relative;
+      isolation: isolate;
+    }
+    .main::before,
+    .main::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: -1;
+    }
+    .main::before {
+      background:
+        linear-gradient(rgba(0,207,255,0.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.026) 1px, transparent 1px);
+      background-size: 76px 76px;
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,0.55), rgba(0,0,0,0.14) 58%, transparent 86%);
+      -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.55), rgba(0,0,0,0.14) 58%, transparent 86%);
+      opacity: 0.52;
+      animation: gridDrift 28s linear infinite;
+    }
+    .main::after {
+      background: linear-gradient(115deg, transparent 18%, rgba(0,207,255,0.05) 44%, rgba(255,255,255,0.035) 50%, transparent 72%);
+      transform: translateX(-72%);
+      opacity: 0.72;
+      animation: softSweep 18s ease-in-out infinite;
+    }
+    .welcome,
+    .messages,
+    .composer-wrap,
+    .mob-header {
+      position: relative;
+      z-index: 1;
     }
 
     /* ─── Welcome ─── */
@@ -340,6 +390,15 @@
 
     .cursor { display: inline-block; width: 6px; height: 0.85em; background: var(--accent); vertical-align: -1px; margin-left: 2px; animation: blink 1s steps(2,start) infinite; border-radius: 1px; }
     @keyframes blink { 0%,50%{opacity:1} 50.01%,100%{opacity:0} }
+    @keyframes gridDrift {
+      from { background-position: 0 0, 0 0; }
+      to   { background-position: 76px 76px, 76px 76px; }
+    }
+    @keyframes softSweep {
+      0%, 32% { transform: translateX(-78%); opacity: 0; }
+      48%     { opacity: 0.72; }
+      76%,100% { transform: translateX(78%); opacity: 0; }
+    }
 
     .status-line { font-size: 0.82rem; color: var(--danger); padding: 10px 14px; border-radius: 8px; background: rgba(248,113,113,0.05); border: 1px solid rgba(248,113,113,0.16); }
 
@@ -708,6 +767,112 @@
     .msg.bot .msg-body strong { color: var(--text); font-weight: 600; }
     .msg.bot .msg-body em { color: var(--text2); }
     .msg.bot .msg-body hr { border: none; border-top: 1px solid var(--border); margin: 0.9em 0; }
+
+    @media (min-width: 1024px) {
+      :root {
+        --sb-w: 244px;
+        --max-w: 840px;
+      }
+      .sb-top { padding: 16px 14px 14px; }
+      .new-chat-btn {
+        padding: 9px 14px;
+        font-size: 0.88rem;
+      }
+      .kb-card {
+        margin: 0 10px 10px;
+        padding: 13px;
+      }
+      .welcome {
+        padding: 56px 32px 22px;
+      }
+      .app-badge { margin-bottom: 24px; }
+      .badge-icon {
+        width: 56px;
+        height: 56px;
+      }
+      .badge-icon img {
+        width: 36px;
+        height: 36px;
+      }
+      .welcome-title {
+        font-size: clamp(2.3rem, 3.1vw, 3rem);
+        margin-bottom: 14px;
+      }
+      .welcome-desc {
+        max-width: 620px;
+        font-size: 1.03rem;
+        line-height: 1.75;
+      }
+      .welcome-by {
+        margin-bottom: 38px;
+      }
+      .messages {
+        padding: 38px 34px 12px;
+        gap: 30px;
+      }
+      .msg { gap: 8px; }
+      .msg-role { font-size: 0.66rem; }
+      .msg-body {
+        font-size: 1.02rem;
+        line-height: 1.78;
+      }
+      .msg.user .msg-body {
+        padding: 14px 18px;
+      }
+      .composer-wrap {
+        padding: 10px 34px 28px;
+        background: linear-gradient(to top, rgba(15,15,18,0.98) 68%, rgba(15,15,18,0.74) 86%, transparent);
+      }
+      .composer-box {
+        background: rgba(255,255,255,0.062);
+        box-shadow: 0 18px 70px rgba(0,0,0,0.44), 0 0 40px rgba(0,207,255,0.045);
+      }
+      textarea#question {
+        font-size: 1rem;
+        line-height: 1.58;
+        padding: 16px 18px 6px;
+      }
+      .composer-toolbar { padding: 10px 12px 12px; }
+      .model-pill,
+      .toolbar-pill {
+        height: 32px;
+        font-size: 0.7rem;
+      }
+      .toolbar-btn {
+        width: 32px;
+        height: 32px;
+      }
+      #send {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+      }
+      .quick-chips {
+        gap: 8px;
+        margin-top: 12px;
+      }
+      .chip {
+        padding: 7px 15px;
+        font-size: 0.86rem;
+      }
+      .source {
+        padding: 9px 12px;
+        font-size: 0.84rem;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .main::before,
+      .main::after,
+      .status-dot,
+      .cursor,
+      .welcome,
+      .msg,
+      .sources,
+      .upload-feedback {
+        animation: none !important;
+      }
+    }
   </style>
 </head>
 <body>
@@ -728,22 +893,28 @@
 
     <div class="kb-card" id="kb-card">
       <div class="kb-card-head">
-        <span>Dokumentenwissen</span>
+        <span>Dokumente</span>
         <div class="kb-actions">
           <button class="kb-refresh" id="kb-refresh" title="Status aktualisieren" aria-label="Wissensbasis aktualisieren">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 1-9 9 9.8 9.8 0 0 1-6.7-2.7"/><path d="M3 12a9 9 0 0 1 9-9 9.8 9.8 0 0 1 6.7 2.7"/><path d="M3 19v-5h5"/><path d="M21 5v5h-5"/></svg>
           </button>
         </div>
       </div>
-      <div class="kb-stats">
-        <div class="kb-stat"><span class="kb-value" id="kb-docs">–</span><span class="kb-label">Dateien</span></div>
-        <div class="kb-stat"><span class="kb-value" id="kb-chunks">–</span><span class="kb-label">Suchteile</span></div>
+      <div class="kb-ready" id="kb-ready">
+        <span class="kb-ready-dot"></span>
+        <span id="kb-ready-text">Dokumente werden geprüft</span>
       </div>
-      <div class="kb-files" id="kb-files"></div>
-      <div class="kb-status" id="kb-status">Dokumente werden in Suchteile zerlegt, damit die KI passende Stellen findet.</div>
-      <button class="kb-action-link" id="kb-reindex" type="button">Index erneuern</button>
-      <div class="kb-updated" id="kb-updated">Zuletzt aktualisiert: –</div>
-      <div class="kb-hint">Durchsuche Firmendokumente mit belegbaren Quellen statt Dateien manuell zu öffnen.</div>
+      <div class="kb-hint">Sobald Dokumente vorbereitet sind, beantwortet die KI Fragen daraus mit Quellen.</div>
+      <div class="kb-admin" id="kb-admin">
+        <div class="kb-stats">
+          <div class="kb-stat"><span class="kb-value" id="kb-docs">–</span><span class="kb-label">Dateien</span></div>
+          <div class="kb-stat"><span class="kb-value" id="kb-chunks">–</span><span class="kb-label">Bereit</span></div>
+        </div>
+        <div class="kb-files" id="kb-files"></div>
+        <div class="kb-status" id="kb-status">Status wird geladen.</div>
+        <button class="kb-action-link" id="kb-reindex" type="button">Suche vorbereiten</button>
+        <div class="kb-updated" id="kb-updated">Zuletzt aktualisiert: –</div>
+      </div>
       <div class="kb-links">
         <a href="https://noxera-labs.de" target="_blank" rel="noopener">Website</a>
         <a href="https://noxera-labs.de/contact" target="_blank" rel="noopener">Kontakt</a>
@@ -898,6 +1069,9 @@ const kbRefresh   = document.getElementById('kb-refresh');
 const kbUpdated   = document.getElementById('kb-updated');
 const kbStatus    = document.getElementById('kb-status');
 const kbReindex   = document.getElementById('kb-reindex');
+const kbReady     = document.getElementById('kb-ready');
+const kbReadyText = document.getElementById('kb-ready-text');
+const kbCard      = document.getElementById('kb-card');
 
 // ─── Helpers ───
 function esc(s) {
@@ -959,15 +1133,28 @@ async function refreshKnowledgeStatus() {
     const res = await fetch('/knowledge');
     if (!res.ok) throw new Error('Status nicht verfügbar');
     const data = await res.json();
-    kbDocs.textContent = data.summary?.files ?? '0';
-    kbChunks.textContent = data.chunks_indexed ?? '0';
-    kbUpdated.textContent = formatUpdated(data.updated_at);
     const fileCount = data.summary?.files ?? 0;
     const chunkCount = data.chunks_indexed ?? 0;
+    kbDocs.textContent = fileCount;
+    kbChunks.textContent = chunkCount > 0 ? 'Ja' : 'Nein';
+    kbUpdated.textContent = formatUpdated(data.updated_at);
     kbStatus.classList.toggle('warn', fileCount > 0 && chunkCount === 0);
-    kbStatus.textContent = fileCount > 0 && chunkCount === 0
-      ? 'Datei vorhanden, aber noch nicht suchbar. Bitte Index erneuern.'
-      : 'Dokumente sind in Suchteile zerlegt und für Quellenantworten bereit.';
+    if (fileCount === 0) {
+      kbReady.classList.add('muted');
+      kbReadyText.textContent = 'Noch keine Dokumente';
+      kbStatus.textContent = 'Noch keine Dokumente hochgeladen.';
+      kbReindex.style.display = 'none';
+    } else if (chunkCount === 0) {
+      kbReady.classList.add('muted');
+      kbReadyText.textContent = 'Dokumente werden vorbereitet';
+      kbStatus.textContent = 'Dokument ist hochgeladen. Klicke auf „Suche vorbereiten“, damit die KI darin suchen kann.';
+      kbReindex.style.display = 'block';
+    } else {
+      kbReady.classList.remove('muted');
+      kbReadyText.textContent = 'Dokumente bereit';
+      kbStatus.textContent = 'Dokumente sind vorbereitet. Die KI kann darin suchen und Quellen anzeigen.';
+      kbReindex.style.display = 'block';
+    }
     const files = data.files || [];
     kbFiles.innerHTML = files.length
       ? files.slice(0, 5).map(f => `<div class="kb-file" title="${esc(f.filename)}">${esc(f.filename)}</div>`).join('')
@@ -976,12 +1163,17 @@ async function refreshKnowledgeStatus() {
     kbDocs.textContent = '–';
     kbChunks.textContent = '–';
     kbUpdated.textContent = 'Zuletzt aktualisiert: –';
+    kbReady.classList.add('muted');
+    kbReadyText.textContent = 'Status nicht erreichbar';
     kbStatus.classList.remove('warn');
     kbStatus.textContent = 'Status nicht erreichbar.';
     kbFiles.innerHTML = '<div class="kb-file">Status nicht erreichbar</div>';
   }
 }
 kbRefresh.addEventListener('click', refreshKnowledgeStatus);
+kbRefresh.addEventListener('dblclick', () => {
+  kbCard.classList.toggle('admin-open');
+});
 kbReindex.addEventListener('click', async () => {
   kbReindex.disabled = true;
   kbReindex.textContent = 'Index läuft...';
@@ -989,12 +1181,12 @@ kbReindex.addEventListener('click', async () => {
     const res = await fetch('/admin/reindex', { method: 'POST' });
     if (!res.ok) throw new Error('Reindex fehlgeschlagen');
     await refreshKnowledgeStatus();
-    showFeedback('Index erneuert. Dokumente sind wieder aktuell.');
+    showFeedback('Suche vorbereitet. Dokumente sind jetzt aktuell.');
   } catch {
     showFeedback('Index konnte nicht erneuert werden.', false);
   } finally {
     kbReindex.disabled = false;
-    kbReindex.textContent = 'Index erneuern';
+    kbReindex.textContent = 'Suche vorbereiten';
   }
 });
 
@@ -1344,9 +1536,6 @@ form.addEventListener('submit', async e => {
           bodyEl.innerHTML = `<span class="status-msg"><span class="status-dot"></span>${esc(p.text || '')}</span>`;
         } else if (ev === 'token') {
           fullText += p.text || '';
-          bodyEl.innerHTML = renderCitations(fullText) + '<span class="cursor"></span>';
-          citeHandlers(bodyEl, sourcesEl);
-          scrollBottom();
         } else if (ev === 'error') {
           throw new Error(p.message || 'Fehler');
         } else if (ev === 'done') {

@@ -10,6 +10,7 @@ import json
 import os
 import re
 import base64
+import tempfile
 from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import AsyncIterator, Optional
@@ -17,7 +18,7 @@ from typing import AsyncIterator, Optional
 import anthropic
 import chromadb
 import pdfplumber
-from chromadb.utils import embedding_functions
+from chromadb.utils.embedding_functions.onnx_mini_lm_l6_v2 import ONNXMiniLM_L6_V2
 from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, StreamingResponse
@@ -29,6 +30,18 @@ from pydantic import BaseModel
 # ──────────────────────────────────────────────
 DATA_DIR = Path("./data/chroma")
 DATA_DIR.mkdir(parents=True, exist_ok=True)
+
+TMP_DIR = Path(os.getenv("NOXERA_TMP_DIR", "./data/tmp"))
+TMP_DIR.mkdir(parents=True, exist_ok=True)
+TMP_DIR_ABS = str(TMP_DIR.resolve())
+os.environ.setdefault("TMPDIR", TMP_DIR_ABS)
+os.environ.setdefault("TEMP", TMP_DIR_ABS)
+os.environ.setdefault("TMP", TMP_DIR_ABS)
+tempfile.tempdir = TMP_DIR_ABS
+
+ONNX_MODEL_DIR = Path(os.getenv("NOXERA_ONNX_MODEL_DIR", "./data/onnx_models/all-MiniLM-L6-v2"))
+ONNX_MODEL_DIR.mkdir(parents=True, exist_ok=True)
+ONNXMiniLM_L6_V2.DOWNLOAD_PATH = ONNX_MODEL_DIR.resolve()
 
 DOCS_DIR = Path("./docs")
 DOCS_DIR.mkdir(parents=True, exist_ok=True)
@@ -66,7 +79,7 @@ ALLOWED_MODELS = set(
 # ChromaDB
 # ──────────────────────────────────────────────
 chroma_client = chromadb.PersistentClient(path=str(DATA_DIR))
-embedding_fn = embedding_functions.DefaultEmbeddingFunction()
+embedding_fn = ONNXMiniLM_L6_V2()
 collection = chroma_client.get_or_create_collection(
     name="noxera_documents",
     embedding_function=embedding_fn,
@@ -228,13 +241,24 @@ def sync_docs_folder():
 
     for f in files:
         try:
-            if f.suffix == ".pdf":
+            suffix = f.suffix.lower()
+            source_path = str(f.relative_to(DOCS_DIR))
+            if suffix == ".pdf":
                 text = extract_pdf_text(f.read_bytes())
+                if not text:
+                    status = "empty"
+                else:
+                    doc_id = f"{f.stem}__{file_hash(text.encode())}"
+                    seen_doc_ids.add(doc_id)
+                    status, _ = _index_text(f.name, text, source_path)
             else:
-                text = f.read_text(encoding="utf-8", errors="ignore")
-            doc_id = f"{f.stem}__{file_hash(text.encode())}"
-            seen_doc_ids.add(doc_id)
-            status, _ = (index_pdf if f.suffix == ".pdf" else index_txt)(f)
+                text = f.read_text(encoding="utf-8", errors="ignore").strip()
+                if not text:
+                    status = "empty"
+                else:
+                    doc_id = f"{f.stem}__{file_hash(text.encode())}"
+                    seen_doc_ids.add(doc_id)
+                    status, _ = _index_text(f.name, text, source_path)
             summary[status] = summary.get(status, 0) + 1
         except Exception as e:
             summary["errors"] += 1
