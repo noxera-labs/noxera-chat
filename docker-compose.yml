@@ -1,0 +1,16 @@
+services:
+  noxera-chat:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - ANTHROPIC_MODEL=${ANTHROPIC_MODEL:-claude-sonnet-4-6}
+      - SYSTEM_PROMPT=${SYSTEM_PROMPT}
+    volumes:
+      - chroma-data:/app/data
+    restart: unless-stopped
+
+volumes:
+  chroma-data:
+    driver: local
