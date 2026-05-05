@@ -518,6 +518,21 @@
     .toolbar-btn.active { background: var(--adim); color: var(--accent); border-color: var(--aborder); }
     .toolbar-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
+    /* ─── Toolbar pill buttons (icon + label) ─── */
+    .toolbar-pill {
+      display: flex; align-items: center; gap: 5px;
+      padding: 5px 9px; height: 30px; border-radius: 7px;
+      background: transparent; border: 1px solid var(--border);
+      cursor: pointer; color: var(--text3);
+      font-family: var(--mono); font-size: 0.67rem; font-weight: 500;
+      transition: background 0.13s, color 0.13s, border-color 0.13s;
+      flex-shrink: 0; white-space: nowrap; -webkit-tap-highlight-color: transparent;
+    }
+    .toolbar-pill:hover { background: var(--s2); color: var(--text2); border-color: var(--border2); }
+    .toolbar-pill.active { background: var(--adim); color: var(--accent); border-color: var(--aborder); }
+    .toolbar-pill:disabled { opacity: 0.4; cursor: not-allowed; }
+    .toolbar-pill .pill-label { letter-spacing: 0.03em; }
+
     /* ─── Searching / status indicator ─── */
     .status-msg {
       display: inline-flex; align-items: center; gap: 7px;
@@ -676,12 +691,14 @@
                 <span class="model-pill-name" id="model-pill-name">Sonnet 4.6</span>
                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
               </button>
-              <button type="button" class="toolbar-btn" id="upload-btn" title="Dokument hochladen (PDF / TXT)">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+              <button type="button" class="toolbar-pill" id="upload-btn" title="PDF oder TXT hochladen und in die Wissensbasis indexieren">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+                <span class="pill-label">Datei</span>
               </button>
               <input type="file" id="file-input" accept=".pdf,.txt" style="display:none;" />
-              <button type="button" class="toolbar-btn" id="search-toggle-btn" title="Web-Suche aktivieren">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <button type="button" class="toolbar-pill" id="search-toggle-btn" title="Web-Suche aktivieren — Claude sucht live im Internet">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <span class="pill-label" id="search-label">Web</span>
               </button>
               <div class="toolbar-spacer"></div>
               <button id="send" type="submit" title="Senden" aria-label="Senden">
@@ -818,10 +835,12 @@ document.addEventListener('click', e => { if (!modelDrop.contains(e.target) && !
 
 // ─── Web search toggle ───
 const searchToggleBtn = document.getElementById('search-toggle-btn');
+const searchLabel = document.getElementById('search-label');
 searchToggleBtn.addEventListener('click', () => {
   webSearchEnabled = !webSearchEnabled;
   searchToggleBtn.classList.toggle('active', webSearchEnabled);
-  searchToggleBtn.title = webSearchEnabled ? 'Web-Suche aktiv – klicken zum Deaktivieren' : 'Web-Suche aktivieren';
+  searchLabel.textContent = webSearchEnabled ? 'Web ✓' : 'Web';
+  searchToggleBtn.title = webSearchEnabled ? 'Web-Suche aktiv – klicken zum Deaktivieren' : 'Web-Suche aktivieren – Claude sucht live im Internet';
 });
 
 // ─── File upload ───
