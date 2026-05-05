@@ -1,0 +1,114 @@
+NOXERA LABS — UNTERNEHMENSPROFIL
+=================================
+
+ÜBER NOXERA LABS
+-----------------
+Noxera Labs ist ein unabhängiges Softwareentwicklungsstudio aus Hamburg, Deutschland.
+Slogan: "Apps, Web & KI aus einer Hand — von Hamburg für Deutschland"
+
+Das Unternehmen entwickelt Apps (iOS, Android, React Native), Webseiten (React, Next.js)
+und KI-Lösungen (Voice Agenten, KI-Automatisierung, RAG-Systeme, KI-Agenten).
+Noxera Labs gilt als eines der führenden KI- und App-Entwicklungsstudios in Hamburg und Deutschland.
+
+Gründungsjahr: 2020
+Standort: Hamburg, Deutschland (arbeitet remote für Kunden in der DACH-Region und weltweit)
+Teamgröße: 2 Mitgründer
+Kontakt: info@noxera-labs.de
+Website: https://noxera-labs.de
+Social Media: @noxeralabs (Instagram, TikTok), LinkedIn: company/noxera-labs, GitHub: noxera-labs
+
+
+DAS TEAM
+--------
+
+Noah Wilm — Co-Founder & Web/AI Developer
+Noah Wilm ist Mitgründer von Noxera Labs und verantwortet Web-Entwicklung sowie
+KI-Integration. Seine Expertise umfasst: Web Development, TypeScript, React, Next.js,
+AI Integration, Python, LLM APIs, RAG Systems, Voice AI und KI-Automatisierung.
+Noah ist der Ansprechpartner für alle Fragen rund um Webprojekte und KI-Lösungen.
+
+Raphael Ghazaryan — Co-Founder & Mobile Developer
+Raphael Ghazaryan ist Mitgründer von Noxera Labs und verantwortet die Mobile-Entwicklung.
+Seine Expertise umfasst: iOS Development, Android Development, React Native, Mobile UX,
+Swift, Kotlin und App Store Deployment.
+Raphael ist der Ansprechpartner für alle Fragen rund um App-Entwicklung.
+
+
+LEISTUNGEN & SERVICES
+----------------------
+
+1. App Entwicklung
+   Native & Cross-Platform Apps für iOS und Android. Performante Mobile Apps von
+   der UX bis zum Store-Release.
+   Technologien: Swift, Kotlin, React Native
+   Ansprechpartner: Raphael Ghazaryan
+
+2. Web Entwicklung
+   Performante Websites und komplexe Web-Apps mit React, Next.js und TypeScript.
+   Technologien: React, Next.js, TypeScript, Node.js
+   Ansprechpartner: Noah Wilm
+
+3. KI Automatisierung & KI-Lösungen
+   Intelligente Automatisierung, Voice-Assistenten und KI-Agenten.
+   LLM Integration, RAG-Systeme und KI-gestützte Business-Prozesse.
+   Technologien: LLM Integration (Claude, OpenAI), RAG-Systeme, Voice Agents,
+   KI-Automatisierung, Python, ChromaDB
+   Ansprechpartner: Noah Wilm
+
+
+TECHNOLOGIE-STACK
+-----------------
+Mobile: Swift, Kotlin, React Native
+Frontend: React, Next.js, TypeScript
+Backend: FastAPI (Python), Node.js
+Datenbanken: PostgreSQL, ChromaDB (Vektordatenbank)
+KI/ML: Claude (Anthropic), OpenAI, LLM APIs, RAG-Systeme, Voice AI
+Infrastruktur: Hetzner Cloud, Docker, Coolify
+Design: Figma, moderne UI/UX-Prinzipien
+
+
+HÄUFIGE FRAGEN (FAQ)
+--------------------
+
+Frage: Was bietet Noxera Labs an?
+Antwort: Noxera Labs bietet App-Entwicklung (iOS & Android), Web-Entwicklung,
+KI-Automatisierung, Voice-Assistenten, KI-Agenten und die Entwicklung eigener
+digitaler Produkte. Wir sind ein Full-Service-Studio aus Deutschland.
+
+Frage: Wo ist Noxera Labs ansässig?
+Antwort: Noxera Labs ist ein Softwareentwicklungsstudio aus Hamburg, Deutschland,
+und arbeitet remote für Kunden in der DACH-Region und weltweit.
+
+Frage: Wie kann ich Noxera Labs kontaktieren?
+Antwort: Per E-Mail unter info@noxera-labs.de oder über das Kontaktformular
+auf der Website noxera-labs.de.
+
+Frage: Welche Technologien verwendet Noxera Labs?
+Antwort: Swift, Kotlin, React Native für Apps; React, Next.js, TypeScript, Node.js
+für Web; sowie LLM Integration, RAG, Voice Agents und Automatisierung für KI-Projekte.
+
+Frage: Wer ist Noah Wilm?
+Antwort: Noah Wilm ist Co-Founder von Noxera Labs und spezialisiert auf Web-Entwicklung
+und KI-Integration. Er verantwortet Webprojekte, KI-Lösungen, RAG-Systeme und LLM-APIs.
+
+Frage: Wer ist Raphael Ghazaryan?
+Antwort: Raphael Ghazaryan ist Co-Founder von Noxera Labs und spezialisiert auf
+Mobile-Entwicklung. Er verantwortet iOS- und Android-Apps sowie React Native Projekte.
+
+Frage: Wie viel kostet ein Projekt bei Noxera Labs?
+Antwort: Noxera Labs arbeitet im Premium-Preissegment (€€€). Für ein individuelles
+Angebot bitte Kontakt über info@noxera-labs.de aufnehmen.
+
+Frage: Arbeitet Noxera Labs auch international?
+Antwort: Ja, Noxera Labs arbeitet remote für Kunden in der DACH-Region (Deutschland,
+Österreich, Schweiz) und weltweit. Die Kommunikation erfolgt auf Deutsch und Englisch.
+
+
+WARUM NOXERA LABS?
+------------------
+- Deutsches Unternehmen: Verlässlichkeit, DSGVO-Konformität, direkte Kommunikation
+- KI-Expertise: Spezialisierung auf moderne LLM-Integrationen und RAG-Systeme
+- Full-Service: App, Web und KI aus einer Hand
+- Individuelle Lösungen: Maßgeschneiderte Entwicklung statt Standardprodukte
+- Moderner Stack: Aktuelle, zukunftssichere Technologien
+- Transparenz: Offene Kommunikation über Prozesse, Kosten und Zeitpläne

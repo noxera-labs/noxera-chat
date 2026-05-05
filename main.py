@@ -1,7 +1,7 @@
 """
-Noxera Labs – RAG Demo System v3
-FastAPI + ChromaDB (persistent) + Claude Sonnet
-Documents are auto-ingested from ./docs/ on startup.
+Noxera Labs — RAG + General AI Chat
+FastAPI + ChromaDB (persistent) + Claude
+Documents are auto-ingested from ./docs/ on startup (PDF + TXT).
 """
 
 import hashlib
@@ -16,7 +16,7 @@ import anthropic
 import chromadb
 import pdfplumber
 from chromadb.utils import embedding_functions
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from fastapi.staticfiles import StaticFiles
@@ -45,23 +45,28 @@ collection = chroma_client.get_or_create_collection(
 )
 
 # ──────────────────────────────────────────────
-# Anthropic — async client so streaming doesn't block FastAPI's event loop
+# Anthropic
 # ──────────────────────────────────────────────
 anthropic_client = anthropic.AsyncAnthropic()
-MODEL = os.getenv("ANTHROPIC_MODEL", "claude-sonnet-4-20250514")
+DEFAULT_MODEL = os.getenv("ANTHROPIC_MODEL", "claude-sonnet-4-6")
 
 SYSTEM_PROMPT = os.getenv(
     "SYSTEM_PROMPT",
-    """Du bist ein präziser Assistent für die hinterlegten Unternehmens-Dokumente.
-Beantworte Fragen ausschließlich auf Basis der bereitgestellten Kontextabschnitte.
-Wenn die Antwort nicht im Kontext steht, sage das klar.
-Verweise auf Quellen mit Kurzmarkern wie [1], [2] direkt im Text — passend zur Quellenliste, die der Anwender unter deiner Antwort sieht.
-Antworte natürlich, in der Sprache der Frage, ohne unnötiges Vorgeplänkel."""
+    """Du bist der KI-Assistent von Noxera Labs — einem unabhängigen Software- und KI-Studio aus Hamburg, Deutschland, gegründet von Noah Wilm und Raphael Ghazaryan.
+
+Wenn Kontext-Abschnitte aus Dokumenten bereitgestellt werden:
+- Nutze sie als primäre Grundlage deiner Antwort
+- Verweise im Fließtext mit [1], [2] etc. auf die Quellen
+
+Wenn kein Dokumentkontext vorhanden ist:
+- Beantworte Fragen aus deinem allgemeinen Wissen
+
+Antworte stets präzise, hilfreich und in der Sprache der Frage.""",
 )
 
 
 # ──────────────────────────────────────────────
-# Helpers
+# Text helpers
 # ──────────────────────────────────────────────
 def chunk_text(text: str, chunk_size: int = 400, overlap: int = 60) -> list[str]:
     words = text.split()
@@ -88,19 +93,15 @@ def file_hash(content: bytes) -> str:
     return hashlib.sha256(content).hexdigest()[:16]
 
 
-def index_pdf(path: Path) -> tuple[str, int]:
-    """Index a PDF file. Returns (status, chunks_added)."""
-    content = path.read_bytes()
-    fhash = file_hash(content)
+def _index_text(path: Path, text: str) -> tuple[str, int]:
+    """Index extracted text into ChromaDB. Returns (status, chunks_added)."""
+    content_bytes = text.encode()
+    fhash = file_hash(content_bytes)
     doc_id = f"{path.stem}__{fhash}"
 
     existing = collection.get(where={"doc_id": doc_id}, limit=1)
     if existing.get("ids"):
         return ("skipped", 0)
-
-    text = extract_pdf_text(content)
-    if not text:
-        return ("empty", 0)
 
     chunks = chunk_text(text)
     if not chunks:
@@ -120,23 +121,39 @@ def index_pdf(path: Path) -> tuple[str, int]:
     return ("indexed", len(chunks))
 
 
+def index_pdf(path: Path) -> tuple[str, int]:
+    content = path.read_bytes()
+    text = extract_pdf_text(content)
+    if not text:
+        return ("empty", 0)
+    return _index_text(path, text)
+
+
+def index_txt(path: Path) -> tuple[str, int]:
+    text = path.read_text(encoding="utf-8", errors="ignore").strip()
+    if not text:
+        return ("empty", 0)
+    return _index_text(path, text)
+
+
 def sync_docs_folder():
-    """Index all PDFs in ./docs/, drop chunks for files that no longer exist."""
-    pdfs = sorted(DOCS_DIR.rglob("*.pdf"))
+    files = sorted(DOCS_DIR.rglob("*.pdf")) + sorted(DOCS_DIR.rglob("*.txt"))
     seen_doc_ids: set[str] = set()
     summary = {"indexed": 0, "skipped": 0, "empty": 0, "too_short": 0, "removed": 0}
 
-    for pdf in pdfs:
+    for f in files:
         try:
-            content = pdf.read_bytes()
-            doc_id = f"{pdf.stem}__{file_hash(content)}"
+            if f.suffix == ".pdf":
+                content = f.read_bytes()
+            else:
+                content = f.read_text(encoding="utf-8", errors="ignore").encode()
+            doc_id = f"{f.stem}__{file_hash(content)}"
             seen_doc_ids.add(doc_id)
-            status, _ = index_pdf(pdf)
+            status, _ = (index_pdf if f.suffix == ".pdf" else index_txt)(f)
             summary[status] = summary.get(status, 0) + 1
         except Exception as e:
-            print(f"[ingest] {pdf.name}: error {e}")
+            print(f"[ingest] {f.name}: error {e}")
 
-    # Remove stale docs (not in folder anymore)
     try:
         existing = collection.get()
         stale_ids: set[str] = set()
@@ -154,12 +171,12 @@ def sync_docs_folder():
     except Exception as e:
         print(f"[ingest] cleanup warning: {e}")
 
-    print(f"[ingest] sync complete: {summary} (total chunks in store: {collection.count()})")
+    print(f"[ingest] sync complete: {summary} (total chunks: {collection.count()})")
     return summary
 
 
 # ──────────────────────────────────────────────
-# Lifespan: ingest on startup
+# Lifespan
 # ──────────────────────────────────────────────
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
@@ -170,7 +187,7 @@ async def lifespan(_app: FastAPI):
 # ──────────────────────────────────────────────
 # App
 # ──────────────────────────────────────────────
-app = FastAPI(title="Noxera Labs RAG Demo", version="3.0.0", lifespan=lifespan)
+app = FastAPI(title="Noxera Labs AI Chat", version="4.0.0", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -186,13 +203,13 @@ app.add_middleware(
 class QueryRequest(BaseModel):
     question: str
     n_results: int = 5
+    model: str | None = None
 
 
 # ──────────────────────────────────────────────
-# Retrieval helper
+# Retrieval
 # ──────────────────────────────────────────────
 def retrieve(question: str, n_results: int) -> tuple[list[str], list[dict], list[float]]:
-    """Returns chunks, metadatas, distances — already de-duplicated and aligned."""
     total = collection.count()
     if total == 0:
         return [], [], []
@@ -202,11 +219,8 @@ def retrieve(question: str, n_results: int) -> tuple[list[str], list[dict], list
     metas = results.get("metadatas", [[]])[0] or []
     dists = results.get("distances", [[]])[0] or []
 
-    # Drop duplicate (filename, chunk_index) hits so citation indices stay contiguous
     seen: set = set()
-    out_chunks: list[str] = []
-    out_metas: list[dict] = []
-    out_dists: list[float] = []
+    out_chunks, out_metas, out_dists = [], [], []
     for chunk, m, d in zip(chunks, metas, dists):
         key = (m.get("filename"), m.get("chunk_index"))
         if key in seen:
@@ -219,6 +233,8 @@ def retrieve(question: str, n_results: int) -> tuple[list[str], list[dict], list
 
 
 def build_messages(question: str, chunks: list[str], metadatas: list[dict]) -> list[dict]:
+    if not chunks:
+        return [{"role": "user", "content": question}]
     context = "\n\n---\n\n".join(
         f"[{i+1}] Quelle: {m.get('filename', 'Unbekannt')}, Abschnitt {m.get('chunk_index', 0)+1}\n{chunk}"
         for i, (chunk, m) in enumerate(zip(chunks, metadatas))
@@ -238,53 +254,26 @@ def sources_payload(metadatas: list[dict], distances: list[float]) -> list[dict]
     ]
 
 
+def sse(event: str, data: dict) -> bytes:
+    return f"event: {event}\ndata: {json.dumps(data, ensure_ascii=False)}\n\n".encode()
+
+
 # ──────────────────────────────────────────────
 # Routes
 # ──────────────────────────────────────────────
-
-@app.post("/query")
-async def query_documents(req: QueryRequest):
-    """Non-streaming fallback (returns full answer + sources)."""
-    chunks, metadatas, distances = retrieve(req.question, req.n_results)
-    if not chunks:
-        raise HTTPException(404, "Keine relevanten Abschnitte gefunden.")
-
-    message = await anthropic_client.messages.create(
-        model=MODEL,
-        max_tokens=1024,
-        system=SYSTEM_PROMPT,
-        messages=build_messages(req.question, chunks, metadatas),
-    )
-    return {
-        "answer": message.content[0].text,
-        "sources": sources_payload(metadatas, distances),
-    }
-
-
 @app.post("/query/stream")
 async def query_stream(req: QueryRequest):
-    """Streaming endpoint via Server-Sent Events.
-
-    Event types:
-      - sources: emitted once before the answer starts
-      - token: incremental text chunks
-      - done: end of stream
-      - error: error message
-    """
+    model = req.model or DEFAULT_MODEL
     chunks, metadatas, distances = retrieve(req.question, req.n_results)
 
     async def event_generator() -> AsyncIterator[bytes]:
-        if not chunks:
-            yield sse("error", {"message": "Keine relevanten Abschnitte gefunden."})
-            return
-
-        # Send sources first so the UI can render placeholders before the answer arrives
-        yield sse("sources", {"sources": sources_payload(metadatas, distances)})
+        if chunks:
+            yield sse("sources", {"sources": sources_payload(metadatas, distances)})
 
         try:
             async with anthropic_client.messages.stream(
-                model=MODEL,
-                max_tokens=1024,
+                model=model,
+                max_tokens=2048,
                 system=SYSTEM_PROMPT,
                 messages=build_messages(req.question, chunks, metadatas),
             ) as stream:
@@ -297,35 +286,23 @@ async def query_stream(req: QueryRequest):
     return StreamingResponse(
         event_generator(),
         media_type="text/event-stream",
-        headers={
-            "Cache-Control": "no-cache",
-            "X-Accel-Buffering": "no",
-        },
+        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
     )
-
-
-def sse(event: str, data: dict) -> bytes:
-    return f"event: {event}\ndata: {json.dumps(data, ensure_ascii=False)}\n\n".encode("utf-8")
 
 
 @app.get("/health")
 async def health():
-    return {
-        "status": "ok",
-        "chunks_indexed": collection.count(),
-        "version": "3.0.0",
-    }
+    return {"status": "ok", "chunks_indexed": collection.count(), "version": "4.0.0"}
 
 
 @app.post("/admin/reindex")
 async def reindex():
-    """Re-scan ./docs/ and update the vector store. Idempotent."""
     summary = sync_docs_folder()
     return {"status": "ok", "summary": summary, "total_chunks": collection.count()}
 
 
 # ──────────────────────────────────────────────
-# Static files (must be last so API routes win)
+# Static (must be last)
 # ──────────────────────────────────────────────
 if STATIC_DIR.exists():
     app.mount("/", StaticFiles(directory=str(STATIC_DIR), html=True), name="static")
