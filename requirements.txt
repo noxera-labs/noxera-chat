@@ -6,3 +6,4 @@ chromadb==0.5.15
 anthropic>=0.50.0
 httpx>=0.28.0
 pydantic==2.8.2
+openpyxl==3.1.5

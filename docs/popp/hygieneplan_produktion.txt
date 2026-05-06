@@ -1,0 +1,64 @@
+HYGIENEPLAN PRODUKTION
+Popp Feinkost — Standorte Mariager und Bremerhaven
+Dokumenten-Nr.: HYG-PRO-2026-04
+Freigegeben durch: QS-Leitung
+Letzte Revision: 2026-01-08
+
+1. GELTUNGSBEREICH
+Dieser Hygieneplan gilt für alle Produktionsbereiche, Lager- und Versandflächen,
+inklusive Fischverarbeitung (Linie 1-3), Salatherstellung (Linie 4-6),
+Brotaufstrich-Linie (Linie 7) und das Hochregallager Mariager.
+
+2. PERSONALHYGIENE
+2.1 Berufskleidung
+- Saubere Schutzkleidung wird täglich gewechselt
+- Kopfbedeckung in allen Produktionsräumen verpflichtend
+- Bartträger müssen Bartnetz tragen
+- Schmuck (außer schlichter Ehering) ist verboten
+- Fingernägel kurz, ohne Lack, keine künstlichen Nägel
+
+2.2 Händehygiene
+- Hände waschen vor Arbeitsbeginn, nach Pausen, nach Toilettengang
+- Desinfektion mit Sterillium beim Betreten von Hochrisiko-Bereichen (Linie 1, 4, 7)
+- Einweg-Handschuhe sind alle 2 Stunden oder bei Beschädigung zu wechseln
+
+2.3 Gesundheit
+- Krankmeldepflicht bei Magen-Darm-Beschwerden, Hauterkrankungen, Wunden
+- Belehrung nach §43 Infektionsschutzgesetz alle 24 Monate
+
+3. REINIGUNGSPLAN
+3.1 Tägliche Reinigung (Ende jeder Schicht)
+- Arbeitsflächen: Schaumreiniger Topax 686, Einwirkzeit 10 min, danach Spülen
+- Maschinen Linie 3: CIP-Spülung mit alkalischem Reiniger Topax 56 (1,5 %)
+- Bodenreinigung: Bona Bodenreiniger 0,5 % alle 4 Stunden
+- Wasserschläuche desinfizieren mit Topax 99 nach Gebrauch
+
+3.2 Wöchentliche Tiefenreinigung (jeden Sonntag)
+- Komplette Demontage der Schneidemaschinen
+- Desinfektion aller Kontaktflächen mit Topax DES400 (3 %)
+- Lufthygiene: Filterwechsel und UV-Lampen-Kontrolle
+- Abflussreinigung mit Schaumreiniger und Hochdruckspülung
+
+3.3 Monatlich
+- Schädlingsbefall-Kontrolle durch externe Firma Anticimex (jeden 1. Montag)
+- Wischproben durch QS-Labor: Listeria, E.coli, Gesamtkeimzahl
+- Wasserprobe Trinkwasserleitung — extern bei Eurofins
+
+4. DESINFEKTIONSMITTEL UND DOSIERUNG
+- Topax 56 (alkalisch): Standardreinigung Maschinen, 1,5-2,0 %
+- Topax 99 (Säure): Entkalkung, 0,8-1,2 %, Einwirkzeit 15 min
+- Topax 686 (Schaum): Flächen, 3-5 %, Einwirkzeit 10 min
+- Topax DES400: Endsäulenfertige Desinfektion, 1,5-3 %
+- Sterillium: Händedesinfektion, unverdünnt
+WICHTIG: Reiniger niemals mischen — chemische Reaktion möglich.
+
+5. RÜCKSTANDSKONTROLLE
+- ATP-Messung an 12 definierten Schwerpunkten nach jeder Reinigung
+- Grenzwert: < 30 RLU für Lebensmittelkontaktflächen
+- Bei Überschreitung: Nachreinigung und Wiederholungsmessung
+
+6. VERANTWORTLICHKEITEN
+- Reinigung Linie 1-3: Schichtführer Produktion (laut Schichtplan)
+- QS-Verifikation: Tägliche Stichprobe durch QS-Mitarbeiter:innen
+- Gesamtverantwortung: QS-Leitung Karin Petersen
+- Externe Firma Anticimex: Schädlingsmonitoring, Berichte monatlich

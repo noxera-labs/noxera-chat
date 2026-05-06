@@ -1,0 +1,56 @@
+ALLERGENINFORMATION BROTAUFSTRICHE
+Popp Feinkost — Linie 7 (Brotaufstriche)
+Dokumenten-Nr.: ALL-BRO-2026-02
+Freigegeben durch: QS-Leitung & Produktentwicklung
+Letzte Revision: 2026-03-04
+
+1. RECHTLICHE GRUNDLAGE
+Diese Information basiert auf der EU-Verordnung 1169/2011 (LMIV), Anhang II,
+welche 14 deklarationspflichtige Allergene definiert. Alle Angaben gelten
+für Standardrezepturen — Sonderchargen siehe individuelle Spezifikation.
+
+2. PRODUKTÜBERSICHT MIT HAUPTALLERGENEN
+
+2.1 Heringscreme klassisch (Art-Nr. 4501)
+Enthält: Fisch (Hering), Senf, Ei (Mayonnaise), Milch (Joghurt), Sulfite
+Spuren möglich von: Sellerie, Sesam (gleiche Linie)
+
+2.2 Eiersalat mit Schnittlauch (Art-Nr. 4520)
+Enthält: Ei, Senf, Sulfite
+Frei von: Fisch, Krebstiere, Erdnüsse, Schalenfrüchte, Sesam, Lupinen
+Spuren möglich von: Milch, Sellerie
+
+2.3 Tomaten-Mozzarella-Aufstrich (Art-Nr. 4535)
+Enthält: Milch (Mozzarella, Sahne), Ei, Sulfite
+Frei von: Fisch, glutenhaltiges Getreide, Erdnüsse
+
+2.4 Champignon-Pfeffer-Creme (Art-Nr. 4540)
+Enthält: Milch, Ei, Sellerie, Senf
+Spuren möglich von: Sulfite, Soja
+
+2.5 Geflügelsalat fein (Art-Nr. 4550)
+Enthält: Ei, Senf, Sellerie, Sulfite
+Spuren möglich von: Milch, Sesam
+
+3. KREUZKONTAMINATIONS-MATRIX
+Linie 7 verarbeitet auf gleicher Anlage:
+- Fischhaltige Produkte (Vor- und Nachmittag)
+- Senfhaltige Produkte (alle Schichten)
+- Eihaltige Produkte (alle Schichten)
+
+Trennung:
+- Fischverarbeitung erfolgt zwischen 06:00-13:00 Uhr
+- Vollständige Reinigung gemäß HYG-PRO-2026-04 vor Wechsel
+- Allergen-Quick-Test (PCR) nach jeder Wechsel-Reinigung
+- Negativbescheinigung erforderlich vor Linienfreigabe
+
+4. UMGANG MIT ANFRAGEN VON KONSUMENTEN
+Bei Anfragen zu Spurenangaben:
+- Verweis auf gedruckte Packungsdeklaration als verbindlich
+- Detailfragen an QS-Leitung weiterleiten (allergene@popp-feinkost.de)
+- Bei Zwischenfällen mit Reaktion: sofortige Meldung an QS und Geschäftsführung
+
+5. INTERNE SCHULUNG
+- Allergen-Schulung verpflichtend für alle Mitarbeitenden Linie 7 (jährlich)
+- Nachweis im Schulungsregister R-SCH-2026
+- Verantwortlich: QS Karin Petersen

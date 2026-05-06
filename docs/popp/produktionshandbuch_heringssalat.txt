@@ -1,0 +1,65 @@
+PRODUKTIONSHANDBUCH HERINGSSALAT NACH HAUSFRAUENART
+Popp Feinkost — Werk Mariager / Linie 3
+Dokumenten-Nr.: PH-HSA-2026-01
+Freigegeben durch: Produktionsleitung & QS
+Letzte Revision: 2026-02-12
+
+1. PRODUKTBESCHREIBUNG
+Heringssalat nach Hausfrauenart, gewürfelte Heringsfilets in Joghurt-Mayonnaise-Dressing
+mit Roter Bete, Apfel, Gewürzgurken und Zwiebeln. Mindesthaltbarkeit: 28 Tage gekühlt
+bei +4 °C in luftdichten Bechern (250 g und 500 g).
+
+2. ZUTATEN UND CHARGEN
+Hauptkomponenten:
+- Matjes-Heringsfilets, entgrätet (38 % Anteil) — Lieferant Lemvig Fisheries A/S
+- Rote Bete in Würfeln (16 %) — Lieferant Nordmark Gemüse GmbH
+- Gewürzgurken (10 %) — eigene Einlegung
+- Äpfel Boskoop (8 %) — saisonal aus Altes Land
+- Mayonnaise 80 % (15 %) — eigene Herstellung Linie 5
+- Joghurt 3,5 % (10 %) — Molkerei Holstein
+- Zwiebeln gewürfelt (3 %)
+
+3. PRODUKTIONSSCHRITTE
+3.1 Vorbereitung (Schritt 1)
+- Heringsfilets aus Salzlake entnehmen, 90 Minuten in Frischwasser bei +4 °C wässern
+- pH-Wert nach Wässerung: Ziel 5,2 ± 0,2
+- Salzgehalt nach Wässerung: 2,8 % ± 0,3 %
+- Filets in 12 mm Würfel schneiden (Maschine Treif Puma 700)
+
+3.2 Gemüsezubereitung (Schritt 2)
+- Rote Bete blanchieren bei 92 °C für 8 Minuten, dann auf +4 °C abkühlen
+- Apfel in Stücke schneiden und in 0,3 % Citratlösung tauchen (Bräunungsschutz)
+- Zwiebeln 30 Sekunden in 80 °C heißem Wasser blanchieren
+
+3.3 Dressing-Herstellung (Schritt 3)
+- Mayonnaise und Joghurt im Verhältnis 60:40 mischen
+- Salz, Zucker, Senf und Gewürze nach Rezeptur PA-DRS-014 zugeben
+- Mischtemperatur: konstant unter +6 °C
+- Endkontrolle pH-Wert: 4,1 ± 0,1
+
+3.4 Mischen und Abfüllen (Schritt 4)
+- Komponenten in Mischer M-7 vorsichtig untereinanderheben (max. 8 U/min)
+- Mischzeit: 4 Minuten — länger zerstört die Heringswürfel
+- Sofort in vorgekühlte Becher abfüllen, Siegelfolie aufbringen
+- Becher müssen Siegeltest bestehen (Drucktest 0,3 bar / 5 Sekunden)
+
+4. KRITISCHE KONTROLLPUNKTE
+- CCP-1: Wässerung der Heringe — Salzgehalt
+- CCP-2: Dressing-Temperatur — max. +6 °C
+- CCP-3: Abfülltemperatur — Produkt darf nicht über +7 °C steigen
+- CCP-4: Siegelnaht — 100 % Kontrolle durch Inline-Vision-System
+
+5. QUALITÄTSKONTROLLE NACH PRODUKTION
+- Sensorische Prüfung pro Charge: Aussehen, Geruch, Geschmack, Konsistenz
+- Mikrobiologie-Stichprobe: Listeria, Salmonellen (Ergebnis nach 48 h)
+- Gewichtskontrolle: ± 2 g pro Becher (250 g)
+
+6. DOKUMENTATION
+Jeder Produktionslauf wird im SAP-System unter Auftragsnummer und Charge
+dokumentiert. Abweichungen werden im NCR-System erfasst und an die QS-Leitung
+gemeldet.
+
+ANSPRECHPARTNER
+Produktionsleitung Linie 3: Stefan Brügge — Durchwahl 1432
+Qualitätssicherung: Karin Petersen — Durchwahl 1810
+Schichtleitung Frühschicht: Marek Wojciechowski — Durchwahl 1438
