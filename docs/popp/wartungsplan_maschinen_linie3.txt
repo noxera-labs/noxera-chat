@@ -1,0 +1,57 @@
+WARTUNGSPLAN MASCHINEN LINIE 3
+Popp Feinkost — Fischsalate und Feinkostsalate
+Dokumenten-Nr.: WPL-L3-2026-01
+Freigegeben durch: Technik/Instandhaltung
+Letzte Revision: 2026-03-30
+
+1. BETROFFENE ANLAGEN
+- Treif Puma 700 Schneidemaschine für Heringsfilets.
+- Mischer M-7 mit Kühlmantel und langsam laufendem Rührwerk.
+- Produktpumpe P-3 und Füllkopf AF-2400.
+- Siegelstation SB-2400.
+- Metalldetektor MD-3.
+- Etikettierer ET-12.
+- Kontrollwaage KW-3.
+
+2. TÄGLICHE WARTUNG DURCH PRODUKTION
+Vor Produktionsbeginn:
+- Sichtprüfung auf Beschädigungen, lose Kabel und Leckagen.
+- Druckluft 6,0 bis 6,5 bar dokumentieren.
+- Testlauf ohne Produkt für 2 Minuten.
+- Not-Aus und Schutzhaubenfunktion prüfen.
+
+Nach Schichtende:
+- Produktreste entfernen.
+- Füllkopf und Dichtungen auf Risse prüfen.
+- Schneidgatter Treif Puma 700 auf Fischgräten und Fremdkörper kontrollieren.
+- Kontrollwaage KW-3 reinigen und Nullpunkt prüfen.
+- Auffälligkeiten im Linienbuch L3 eintragen.
+
+3. WÖCHENTLICHE WARTUNG DURCH TECHNIK
+- Schmierung der Führungsschienen AF-2400 mit NSF-H1-Fett Klüberfood NH1 94-402.
+- Prüfung der Dichtung FK-D12 am Füllkopf.
+- Kontrolle der Pumpenmembran P-3-MB.
+- Prüfung Siegelbacken auf Beschädigung und gleichmäßige Temperatur.
+- Test Metalldetektor MD-3 mit Fe, NFe und Edelstahl.
+- Etikettierer ET-12: Rollenführung, Sensor S-ET2 und Andruckrolle reinigen.
+
+4. MONATLICHE WARTUNG
+- Kalibrierung Kontrollwaage KW-3 mit 100 g, 250 g und 500 g Prüfgewichten.
+- Thermofühler T-SB1 und T-M7 mit Referenzthermometer vergleichen.
+- Datalogger Kühlmantel M-7 auslesen.
+- Sicherheitskreis durch Elektrofachkraft prüfen.
+- Ersatzteilbestand kontrollieren.
+
+5. ERSATZTEILE MINDESTBESTAND
+- FK-D12 Dichtung Füllkopf: Mindestbestand 12 Stück.
+- P-3-MB Pumpenmembran: Mindestbestand 4 Stück.
+- HZ-2400 Heizpatrone Siegelbacke: Mindestbestand 2 Stück.
+- S-ET2 Etikettensensor: Mindestbestand 1 Stück.
+- SB-TF1 Temperaturfühler Siegelbacke: Mindestbestand 2 Stück.
+- Messersegment Treif Puma 700 12 mm: Mindestbestand 1 Satz.
+
+6. FREIGABE NACH WARTUNG
+- Jede Wartung wird in SAP-PM mit Auftrag und Technikername dokumentiert.
+- Nach produktberührender Wartung ist Reinigung und QS-Freigabe Pflicht.
+- Nach Eingriff am Metalldetektor oder der Kontrollwaage ist eine Funktionsprüfung Pflicht.
+- Ohne dokumentierte Freigabe darf Linie 3 nicht in Produktion gehen.

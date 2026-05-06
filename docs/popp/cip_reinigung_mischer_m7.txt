@@ -1,0 +1,52 @@
+CIP-REINIGUNG MISCHER M-7 UND PRODUKTLEITUNG P-3
+Popp Feinkost — Linie 3
+Dokumenten-Nr.: CIP-M7-2026-04
+Freigegeben durch: QS und Technik
+Letzte Revision: 2026-04-10
+
+1. ZIEL
+Die CIP-Reinigung entfernt Produktreste, Fett, Eiweiß und mikrobiologische
+Belastungen aus Mischer M-7, Pumpe P-3, Produktleitung und Füllkopf AF-2400.
+
+2. AUSLÖSER
+- Nach jeder Produktionsschicht.
+- Bei Produktwechsel von Fisch auf nicht-fischhaltige Artikel.
+- Nach ungeplanter Stillstandszeit über 45 Minuten mit Produkt im System.
+- Nach Eingriffen an Füllkopf, Pumpe oder Produktleitung.
+
+3. PROGRAMM CIP-L3-STD
+1. Vorspülen mit Trinkwasser bei 35 bis 40 °C für 6 Minuten.
+2. Alkalische Reinigung Topax 56 mit 1,8 % bei 62 °C für 18 Minuten.
+3. Zwischenspülen mit Trinkwasser bis Leitfähigkeit unter 80 µS/cm über Zulauf liegt.
+4. Saure Reinigung Topax 99 mit 1,0 % bei 55 °C für 10 Minuten.
+5. Klarspülen mit Trinkwasser für 8 Minuten.
+6. Desinfektion Topax DES400 mit 1,5 % für 12 Minuten.
+7. Endspülen mit kaltem Trinkwasser bis pH 6,5 bis 7,5 erreicht ist.
+
+4. FREIGABEWERTE
+- ATP-Messung Lebensmittelkontaktflächen: unter 30 RLU.
+- pH-Endspülwasser: 6,5 bis 7,5.
+- Leitfähigkeit Endspülwasser: maximal 80 µS/cm über Trinkwasserreferenz.
+- Sichtkontrolle: keine Produktreste im Füllkopf oder an Dichtungen.
+- Temperaturaufzeichnung muss vollständig im CIP-Report stehen.
+
+5. MANUELLE NACHREINIGUNG
+Manuelle Nachreinigung ist erforderlich, wenn:
+- Heringsstücke im Füllrohr sichtbar sind.
+- ATP-Wert über 30 RLU liegt.
+- Dichtung FK-D12 Produktreste zeigt.
+- CIP-Programm wegen Druckabfall abgebrochen wurde.
+
+Vorgehen:
+- Anlage verriegeln.
+- Füllkopf demontieren.
+- Kontaktflächen mit Topax 686 einschäumen, 10 Minuten einwirken lassen.
+- Mit Trinkwasser spülen und danach Topax DES400 anwenden.
+- QS führt erneute ATP-Messung durch.
+
+6. DOKUMENTATION
+- CIP-Report wird automatisch unter SAP-QM CIP-L3 gespeichert.
+- QS dokumentiert ATP-Werte im Prüfplan QP-L3-CIP.
+- Abweichungen werden als NCR angelegt.
+- Verantwortlich für Durchführung: Schichtführer Produktion.
+- Verantwortlich für Freigabe: QS-Mitarbeiter:in der jeweiligen Schicht.

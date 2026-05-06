@@ -1,0 +1,71 @@
+STÖRUNGSLEITFADEN LINIE 3 — ABFÜLLUNG UND SIEGELUNG
+Popp Feinkost — AF-2400, MD-3, Etikettierer ET-12
+Dokumenten-Nr.: STL-L3-2026-02
+Freigegeben durch: Technik/Instandhaltung
+Letzte Revision: 2026-04-22
+
+1. ALLGEMEINES VORGEHEN
+- Störung am HMI lesen und Uhrzeit im Linienprotokoll notieren.
+- Produktfluss stoppen, wenn Lebensmittelsicherheit oder Gewicht betroffen ist.
+- Bei offener Schutzhaube oder Not-Aus niemals quittieren, bevor die Ursache klar ist.
+- Nach jeder produktberührenden Störung QS informieren.
+- Wenn eine Störung länger als 15 Minuten dauert: Produktionsleitung und Technik rufen.
+
+2. FEHLER E-17: FÜLLKOPF BLOCKIERT
+Symptome:
+- HMI meldet E-17 Füllkopf blockiert.
+- Füllgewicht schwankt oder Becher bleiben leer.
+- Pumpe P-3 läuft gegen Druck.
+
+Maßnahmen:
+1. Anlage stoppen und Produktzufuhr schließen.
+2. Füllkopf über HMI in Serviceposition fahren.
+3. Schutzhaube öffnen und Verriegelung abwarten.
+4. Füllrohr auf Produktstücke, Folienreste oder Dichtungsteile prüfen.
+5. Füllrohr mit warmem Trinkwasser spülen, keine Metallwerkzeuge verwenden.
+6. Dichtung FK-D12 prüfen; bei Beschädigung ersetzen.
+7. Anlage schließen, 5 Vorlaufbecher verwerfen und 10 Kontrollbecher wiegen.
+8. QS-Freigabe einholen, wenn Produktkontaktflächen geöffnet wurden.
+
+3. FEHLER E-24: SIEGELTEMPERATUR ZU NIEDRIG
+Maßnahmen:
+- Sollwert 178 bis 184 °C prüfen.
+- 8 Minuten Aufheizzeit abwarten.
+- Temperaturfühler T-SB1 auf festen Sitz prüfen.
+- Wenn Temperatur nicht steigt: Technik rufen, Heizpatrone HZ-2400 prüfen lassen.
+- Alle Becher seit letzter gültiger Temperaturmessung sperren.
+
+4. FEHLER E-31: METALLDETEKTOR ABWURF
+Maßnahmen:
+- Ausgeworfenen Becher sichern und Charge sperren.
+- Test mit 0,8 mm Fe, 1,2 mm NFe und 1,5 mm Edelstahl durchführen.
+- Bei erfolgreichem Test: betroffenen Becher an QS übergeben.
+- Bei fehlgeschlagenem Test: Linie stoppen, Technik und QS rufen.
+- Produktion erst nach dokumentierter QS-Freigabe fortsetzen.
+
+5. UNGLEICHMÄSSIGE FÜLLGEWICHTE
+Mögliche Ursachen:
+- Luft im Produktstrom.
+- Produkt zu kalt oder zu fest.
+- Füllrohr teilweise blockiert.
+- Pumpe P-3 fördert ungleichmäßig.
+
+Korrektur:
+- Produktpuffer im Mischer M-7 prüfen, Zieltemperatur +4 bis +6 °C.
+- Pumpe P-3 entlüften.
+- Rührwerk M-7 auf 6 bis 8 U/min einstellen.
+- 20 Kontrollbecher wiegen; bei mehr als 2 Ausreißern Technik rufen.
+- Gewichtsabweichungen im SAP-QM Los dokumentieren.
+
+6. ETIKETTENFEHLER ET-12
+- Etikettenrolle auf korrekte Artikelnummer prüfen.
+- Sensor S-ET2 reinigen.
+- Spendeversatz über HMI maximal ±2 mm korrigieren.
+- Bei falschem Etikett: Linie stoppen und seit letztem Rollenwechsel Ware sperren.
+
+7. WANN SOFORT TECHNIK RUFEN?
+- Servoachse meldet Überstrom.
+- Druckluft fällt unter 5,8 bar.
+- Siegelbacke heizt über 190 °C.
+- Schutzkreis lässt sich nicht quittieren.
+- Wiederkehrende E-17 Störung mehr als 2-mal pro Stunde.

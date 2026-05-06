@@ -36,9 +36,9 @@ DATA_DIR.mkdir(parents=True, exist_ok=True)
 TMP_DIR = Path(os.getenv("NOXERA_TMP_DIR", "./data/tmp"))
 TMP_DIR.mkdir(parents=True, exist_ok=True)
 TMP_DIR_ABS = str(TMP_DIR.resolve())
-os.environ.setdefault("TMPDIR", TMP_DIR_ABS)
-os.environ.setdefault("TEMP", TMP_DIR_ABS)
-os.environ.setdefault("TMP", TMP_DIR_ABS)
+os.environ["TMPDIR"] = TMP_DIR_ABS
+os.environ["TEMP"] = TMP_DIR_ABS
+os.environ["TMP"] = TMP_DIR_ABS
 tempfile.tempdir = TMP_DIR_ABS
 
 ONNX_MODEL_DIR = Path(os.getenv("NOXERA_ONNX_MODEL_DIR", "./data/onnx_models/all-MiniLM-L6-v2"))
@@ -118,6 +118,8 @@ POPP_PROMPT = """Du bist der interne KI-Assistent von Popp Feinkost — einem tr
 
 Du hilfst Mitarbeitenden in Produktion, Qualitätssicherung, Logistik und Verwaltung dabei, Antworten aus internen Dokumenten zu finden:
 - Produktionshandbücher und Rezepturen
+- Maschinenhandbücher, Bedienungsanleitungen und Störungsleitfäden
+- Wartungspläne, Rüstvorgaben, CIP-Reinigung und Ersatzteilhinweise
 - HACCP-Pläne und Hygienevorschriften
 - Allergeninformationen und Produkt-Spezifikationen
 - Lieferanten- und Rohstofflisten
@@ -131,7 +133,7 @@ Wenn Kontext-Abschnitte aus Dokumenten bereitgestellt werden:
 
 Wenn die Frage über die hinterlegten Dokumente hinausgeht (z. B. tagesaktuelle Schichten, individuelle Personalfragen, Preise):
 - Weise freundlich darauf hin, dass die Information nicht in der Wissensbasis liegt
-- Empfiehl die zuständige Abteilung: Qualitätssicherung, Produktionsleitung, Personalabteilung oder Einkauf
+- Empfiehl die zuständige Abteilung: Qualitätssicherung, Produktionsleitung, Technik/Instandhaltung, Personalabteilung oder Einkauf
 
 Antworte stets präzise, sachlich, in fachlich korrekter Sprache und immer in der Sprache der Frage — bevorzugt Deutsch."""
 
@@ -157,16 +159,18 @@ WORKSPACES: dict = {
         "id": "popp",
         "name": "Popp Feinkost",
         "tagline": "Interner Wissensassistent — Popp Feinkost",
-        "description": "Antworten aus Produktionshandbüchern, Rezepturen, HACCP-Plänen und Excel-Tabellen — direkt aus eurer internen Wissensbasis. Mit Quellenangabe.",
+        "description": "Antworten aus Produktionshandbüchern, Maschinenanleitungen, Wartungsplänen, Rezepturen, HACCP-Plänen und Excel-Tabellen — direkt aus eurer internen Wissensbasis. Mit Quellenangabe.",
         "accent": "#E8472D",
         "logo_url": None,
         "system_prompt": POPP_PROMPT,
         "chips": [
             {"label": "Heringssalat-Prozess", "q": "Beschreibe Schritt für Schritt den Produktionsprozess für Heringssalat inklusive Temperaturen und Hygieneanforderungen."},
+            {"label": "Maschinenstart", "q": "Wie starte ich die Abfüllanlage AF-2400 auf Linie 3 korrekt und welche Prüfungen sind vor Produktionsbeginn nötig?"},
+            {"label": "Störung beheben", "q": "Was soll ich tun, wenn die Abfüllanlage AF-2400 den Fehler E-17 oder ungleichmäßige Füllgewichte meldet?"},
+            {"label": "Wartung Linie 3", "q": "Welche täglichen und wöchentlichen Wartungsarbeiten sind an Linie 3 vorgeschrieben?"},
             {"label": "HACCP-CCPs", "q": "Welche kritischen Kontrollpunkte (CCPs) gibt es laut HACCP-Plan und was sind die Grenzwerte?"},
             {"label": "Allergene", "q": "Welche Allergene sind in unseren Brotaufstrichen enthalten und welche Kreuzkontaminationsrisiken gibt es?"},
-            {"label": "Rezeptur Eiersalat", "q": "Wie lautet die genaue Rezeptur für Eiersalat und welche Lieferanten beliefern uns mit den Zutaten?"},
-            {"label": "Hygieneplan", "q": "Wie oft müssen Produktionsflächen gereinigt werden und welche Mittel werden verwendet?"},
+            {"label": "CIP-Reinigung", "q": "Wie läuft die CIP-Reinigung am Mischer M-7 ab und welche Freigabewerte müssen erreicht werden?"},
         ],
     },
 }
@@ -412,13 +416,19 @@ def _migrate_legacy_docs():
 
 
 def _seed_popp_demo():
-    """Auto-create example documents for Popp Feinkost workspace if folder is empty."""
+    """Auto-create example documents for the Popp Feinkost workspace."""
     popp_dir = docs_dir_for("popp")
-    if any(p for p in popp_dir.iterdir() if p.is_file() and p.suffix.lower() in SUPPORTED_DOC_EXTS):
-        return
-    print("[seed] generating Popp Feinkost demo documents…")
-    _seed_popp_text(popp_dir)
-    _seed_popp_excel(popp_dir)
+    has_docs = any(p for p in popp_dir.iterdir() if p.is_file() and p.suffix.lower() in SUPPORTED_DOC_EXTS)
+    if not has_docs:
+        print("[seed] generating Popp Feinkost demo documents…")
+        _seed_popp_text(popp_dir)
+        _seed_popp_excel(popp_dir)
+    _seed_popp_machine_text(popp_dir)
+
+
+def _write_demo_doc(path: Path, content: str):
+    if not path.exists():
+        path.write_text(content.strip() + "\n", encoding="utf-8")
 
 
 def _seed_popp_text(popp_dir: Path):
@@ -620,6 +630,271 @@ Bei Anfragen zu Spurenangaben:
 - Verantwortlich: QS Karin Petersen
 """,
         encoding="utf-8",
+    )
+
+
+def _seed_popp_machine_text(popp_dir: Path):
+    _write_demo_doc(
+        popp_dir / "bedienungsanleitung_abfuellanlage_af2400.txt",
+        """BEDIENUNGSANLEITUNG ABFÜLLANLAGE AF-2400
+Popp Feinkost — Linie 3 Salatabfüllung
+Dokumenten-Nr.: BA-AF2400-2026-03
+Hersteller: Krones FoodTec GmbH
+Anlage: AF-2400, Becherformate 250 g und 500 g
+Freigegeben durch: Technik/Instandhaltung
+Letzte Revision: 2026-04-18
+
+1. ZWECK UND GELTUNGSBEREICH
+Diese Anleitung beschreibt das sichere Starten, Rüsten, Bedienen und Stoppen
+der Abfüllanlage AF-2400 auf Linie 3. Sie gilt für Heringssalat, Eiersalat,
+Krautsalat und Brotaufstriche mit viskoser Konsistenz.
+
+2. VORAUSSETZUNGEN VOR DEM START
+- Linienfreigabe durch QS muss im Terminal L3-QS grün angezeigt werden.
+- CIP-Freigabe darf nicht älter als 12 Stunden sein.
+- Druckluft muss 6,0 bis 6,5 bar betragen.
+- Produktpuffer im Mischer M-7 muss unter +6 °C liegen.
+- Bechermagazin, Siegelfolie und Etiketten müssen zum Produktionsauftrag passen.
+- Not-Aus-Taster, Schutzhauben und Lichtgitter prüfen.
+- Metalldetektor MD-3 muss den Testkörper 0,8 mm Fe erkennen.
+
+3. STARTABLAUF
+1. Hauptschalter Q1 auf EIN stellen.
+2. HMI mit Bedienerkarte anmelden.
+3. Rezeptur über SAP-Auftrag laden, z. B. HSA-250 oder EIS-500.
+4. Becherformat bestätigen und Formatwerkzeug kontrollieren.
+5. Pumpe P-3 auf Handbetrieb stellen und Produkt bis zum Füllkopf fördern.
+6. Vorlaufbecher verwerfen, bis das Produkt blasenfrei austritt.
+7. Automatikbetrieb starten und die ersten 10 Becher wiegen.
+8. Produktionsfreigabe im Linienprotokoll bestätigen.
+
+4. SOLLWERTE
+- Füllgewicht 250-g-Becher: 250 g ± 2 g.
+- Füllgewicht 500-g-Becher: 500 g ± 3 g.
+- Taktleistung Standard: 42 Becher/min bei 250 g, 30 Becher/min bei 500 g.
+- Siegeltemperatur: 178 bis 184 °C.
+- Siegeldruck: 4,2 bis 4,8 bar.
+- Vakuum Folienansaugung: mindestens -0,55 bar.
+
+5. RÜSTEN AUF ANDERES FORMAT
+- Anlage stoppen, Restprodukt über Rücklauf in M-7 führen.
+- Becherstern, Füllrohr und Folienführung gemäß Werkzeugliste wechseln.
+- Formatwechsel darf nur durch geschulte Operatoren oder Technik erfolgen.
+- Nach jedem Rüstvorgang sind 5 Leerläufe und 10 Kontrollbecher Pflicht.
+- QS prüft Gewicht, Siegelnaht, Etikett und Metalldetektor.
+
+6. STOPP UND SCHICHTENDE
+- Produktzufuhr schließen und Pumpe P-3 leerfahren.
+- Anlage in Grundstellung fahren.
+- Restbecher aus Austrag entfernen.
+- Reinigungsmodus aktivieren und Übergabe an Reinigungsteam dokumentieren.
+
+7. SICHERHEIT
+- Schutzhauben niemals überbrücken.
+- Bei Eingriffen am Füllkopf muss die Anlage verriegelt und gegen Wiedereinschalten gesichert werden.
+- Heiße Siegelbacken nur mit Hitzeschutzhandschuhen berühren.
+- Störungen an Servoantrieben nur durch Technik/Instandhaltung beheben lassen.
+
+ANSPRECHPARTNER
+Technik Linie 3: Jens Martens — Durchwahl 1715
+Produktionsleitung Linie 3: Stefan Brügge — Durchwahl 1432
+QS-Freigabe: Karin Petersen — Durchwahl 1810
+""",
+    )
+
+    _write_demo_doc(
+        popp_dir / "stoerungsleitfaden_linie3_abfuellung.txt",
+        """STÖRUNGSLEITFADEN LINIE 3 — ABFÜLLUNG UND SIEGELUNG
+Popp Feinkost — AF-2400, MD-3, Etikettierer ET-12
+Dokumenten-Nr.: STL-L3-2026-02
+Freigegeben durch: Technik/Instandhaltung
+Letzte Revision: 2026-04-22
+
+1. ALLGEMEINES VORGEHEN
+- Störung am HMI lesen und Uhrzeit im Linienprotokoll notieren.
+- Produktfluss stoppen, wenn Lebensmittelsicherheit oder Gewicht betroffen ist.
+- Bei offener Schutzhaube oder Not-Aus niemals quittieren, bevor die Ursache klar ist.
+- Nach jeder produktberührenden Störung QS informieren.
+- Wenn eine Störung länger als 15 Minuten dauert: Produktionsleitung und Technik rufen.
+
+2. FEHLER E-17: FÜLLKOPF BLOCKIERT
+Symptome:
+- HMI meldet E-17 Füllkopf blockiert.
+- Füllgewicht schwankt oder Becher bleiben leer.
+- Pumpe P-3 läuft gegen Druck.
+
+Maßnahmen:
+1. Anlage stoppen und Produktzufuhr schließen.
+2. Füllkopf über HMI in Serviceposition fahren.
+3. Schutzhaube öffnen und Verriegelung abwarten.
+4. Füllrohr auf Produktstücke, Folienreste oder Dichtungsteile prüfen.
+5. Füllrohr mit warmem Trinkwasser spülen, keine Metallwerkzeuge verwenden.
+6. Dichtung FK-D12 prüfen; bei Beschädigung ersetzen.
+7. Anlage schließen, 5 Vorlaufbecher verwerfen und 10 Kontrollbecher wiegen.
+8. QS-Freigabe einholen, wenn Produktkontaktflächen geöffnet wurden.
+
+3. FEHLER E-24: SIEGELTEMPERATUR ZU NIEDRIG
+Maßnahmen:
+- Sollwert 178 bis 184 °C prüfen.
+- 8 Minuten Aufheizzeit abwarten.
+- Temperaturfühler T-SB1 auf festen Sitz prüfen.
+- Wenn Temperatur nicht steigt: Technik rufen, Heizpatrone HZ-2400 prüfen lassen.
+- Alle Becher seit letzter gültiger Temperaturmessung sperren.
+
+4. FEHLER E-31: METALLDETEKTOR ABWURF
+Maßnahmen:
+- Ausgeworfenen Becher sichern und Charge sperren.
+- Test mit 0,8 mm Fe, 1,2 mm NFe und 1,5 mm Edelstahl durchführen.
+- Bei erfolgreichem Test: betroffenen Becher an QS übergeben.
+- Bei fehlgeschlagenem Test: Linie stoppen, Technik und QS rufen.
+- Produktion erst nach dokumentierter QS-Freigabe fortsetzen.
+
+5. UNGLEICHMÄSSIGE FÜLLGEWICHTE
+Mögliche Ursachen:
+- Luft im Produktstrom.
+- Produkt zu kalt oder zu fest.
+- Füllrohr teilweise blockiert.
+- Pumpe P-3 fördert ungleichmäßig.
+
+Korrektur:
+- Produktpuffer im Mischer M-7 prüfen, Zieltemperatur +4 bis +6 °C.
+- Pumpe P-3 entlüften.
+- Rührwerk M-7 auf 6 bis 8 U/min einstellen.
+- 20 Kontrollbecher wiegen; bei mehr als 2 Ausreißern Technik rufen.
+- Gewichtsabweichungen im SAP-QM Los dokumentieren.
+
+6. ETIKETTENFEHLER ET-12
+- Etikettenrolle auf korrekte Artikelnummer prüfen.
+- Sensor S-ET2 reinigen.
+- Spendeversatz über HMI maximal ±2 mm korrigieren.
+- Bei falschem Etikett: Linie stoppen und seit letztem Rollenwechsel Ware sperren.
+
+7. WANN SOFORT TECHNIK RUFEN?
+- Servoachse meldet Überstrom.
+- Druckluft fällt unter 5,8 bar.
+- Siegelbacke heizt über 190 °C.
+- Schutzkreis lässt sich nicht quittieren.
+- Wiederkehrende E-17 Störung mehr als 2-mal pro Stunde.
+""",
+    )
+
+    _write_demo_doc(
+        popp_dir / "wartungsplan_maschinen_linie3.txt",
+        """WARTUNGSPLAN MASCHINEN LINIE 3
+Popp Feinkost — Fischsalate und Feinkostsalate
+Dokumenten-Nr.: WPL-L3-2026-01
+Freigegeben durch: Technik/Instandhaltung
+Letzte Revision: 2026-03-30
+
+1. BETROFFENE ANLAGEN
+- Treif Puma 700 Schneidemaschine für Heringsfilets.
+- Mischer M-7 mit Kühlmantel und langsam laufendem Rührwerk.
+- Produktpumpe P-3 und Füllkopf AF-2400.
+- Siegelstation SB-2400.
+- Metalldetektor MD-3.
+- Etikettierer ET-12.
+- Kontrollwaage KW-3.
+
+2. TÄGLICHE WARTUNG DURCH PRODUKTION
+Vor Produktionsbeginn:
+- Sichtprüfung auf Beschädigungen, lose Kabel und Leckagen.
+- Druckluft 6,0 bis 6,5 bar dokumentieren.
+- Testlauf ohne Produkt für 2 Minuten.
+- Not-Aus und Schutzhaubenfunktion prüfen.
+
+Nach Schichtende:
+- Produktreste entfernen.
+- Füllkopf und Dichtungen auf Risse prüfen.
+- Schneidgatter Treif Puma 700 auf Fischgräten und Fremdkörper kontrollieren.
+- Kontrollwaage KW-3 reinigen und Nullpunkt prüfen.
+- Auffälligkeiten im Linienbuch L3 eintragen.
+
+3. WÖCHENTLICHE WARTUNG DURCH TECHNIK
+- Schmierung der Führungsschienen AF-2400 mit NSF-H1-Fett Klüberfood NH1 94-402.
+- Prüfung der Dichtung FK-D12 am Füllkopf.
+- Kontrolle der Pumpenmembran P-3-MB.
+- Prüfung Siegelbacken auf Beschädigung und gleichmäßige Temperatur.
+- Test Metalldetektor MD-3 mit Fe, NFe und Edelstahl.
+- Etikettierer ET-12: Rollenführung, Sensor S-ET2 und Andruckrolle reinigen.
+
+4. MONATLICHE WARTUNG
+- Kalibrierung Kontrollwaage KW-3 mit 100 g, 250 g und 500 g Prüfgewichten.
+- Thermofühler T-SB1 und T-M7 mit Referenzthermometer vergleichen.
+- Datalogger Kühlmantel M-7 auslesen.
+- Sicherheitskreis durch Elektrofachkraft prüfen.
+- Ersatzteilbestand kontrollieren.
+
+5. ERSATZTEILE MINDESTBESTAND
+- FK-D12 Dichtung Füllkopf: Mindestbestand 12 Stück.
+- P-3-MB Pumpenmembran: Mindestbestand 4 Stück.
+- HZ-2400 Heizpatrone Siegelbacke: Mindestbestand 2 Stück.
+- S-ET2 Etikettensensor: Mindestbestand 1 Stück.
+- SB-TF1 Temperaturfühler Siegelbacke: Mindestbestand 2 Stück.
+- Messersegment Treif Puma 700 12 mm: Mindestbestand 1 Satz.
+
+6. FREIGABE NACH WARTUNG
+- Jede Wartung wird in SAP-PM mit Auftrag und Technikername dokumentiert.
+- Nach produktberührender Wartung ist Reinigung und QS-Freigabe Pflicht.
+- Nach Eingriff am Metalldetektor oder der Kontrollwaage ist eine Funktionsprüfung Pflicht.
+- Ohne dokumentierte Freigabe darf Linie 3 nicht in Produktion gehen.
+""",
+    )
+
+    _write_demo_doc(
+        popp_dir / "cip_reinigung_mischer_m7.txt",
+        """CIP-REINIGUNG MISCHER M-7 UND PRODUKTLEITUNG P-3
+Popp Feinkost — Linie 3
+Dokumenten-Nr.: CIP-M7-2026-04
+Freigegeben durch: QS und Technik
+Letzte Revision: 2026-04-10
+
+1. ZIEL
+Die CIP-Reinigung entfernt Produktreste, Fett, Eiweiß und mikrobiologische
+Belastungen aus Mischer M-7, Pumpe P-3, Produktleitung und Füllkopf AF-2400.
+
+2. AUSLÖSER
+- Nach jeder Produktionsschicht.
+- Bei Produktwechsel von Fisch auf nicht-fischhaltige Artikel.
+- Nach ungeplanter Stillstandszeit über 45 Minuten mit Produkt im System.
+- Nach Eingriffen an Füllkopf, Pumpe oder Produktleitung.
+
+3. PROGRAMM CIP-L3-STD
+1. Vorspülen mit Trinkwasser bei 35 bis 40 °C für 6 Minuten.
+2. Alkalische Reinigung Topax 56 mit 1,8 % bei 62 °C für 18 Minuten.
+3. Zwischenspülen mit Trinkwasser bis Leitfähigkeit unter 80 µS/cm über Zulauf liegt.
+4. Saure Reinigung Topax 99 mit 1,0 % bei 55 °C für 10 Minuten.
+5. Klarspülen mit Trinkwasser für 8 Minuten.
+6. Desinfektion Topax DES400 mit 1,5 % für 12 Minuten.
+7. Endspülen mit kaltem Trinkwasser bis pH 6,5 bis 7,5 erreicht ist.
+
+4. FREIGABEWERTE
+- ATP-Messung Lebensmittelkontaktflächen: unter 30 RLU.
+- pH-Endspülwasser: 6,5 bis 7,5.
+- Leitfähigkeit Endspülwasser: maximal 80 µS/cm über Trinkwasserreferenz.
+- Sichtkontrolle: keine Produktreste im Füllkopf oder an Dichtungen.
+- Temperaturaufzeichnung muss vollständig im CIP-Report stehen.
+
+5. MANUELLE NACHREINIGUNG
+Manuelle Nachreinigung ist erforderlich, wenn:
+- Heringsstücke im Füllrohr sichtbar sind.
+- ATP-Wert über 30 RLU liegt.
+- Dichtung FK-D12 Produktreste zeigt.
+- CIP-Programm wegen Druckabfall abgebrochen wurde.
+
+Vorgehen:
+- Anlage verriegeln.
+- Füllkopf demontieren.
+- Kontaktflächen mit Topax 686 einschäumen, 10 Minuten einwirken lassen.
+- Mit Trinkwasser spülen und danach Topax DES400 anwenden.
+- QS führt erneute ATP-Messung durch.
+
+6. DOKUMENTATION
+- CIP-Report wird automatisch unter SAP-QM CIP-L3 gespeichert.
+- QS dokumentiert ATP-Werte im Prüfplan QP-L3-CIP.
+- Abweichungen werden als NCR angelegt.
+- Verantwortlich für Durchführung: Schichtführer Produktion.
+- Verantwortlich für Freigabe: QS-Mitarbeiter:in der jeweiligen Schicht.
+""",
     )
 
 

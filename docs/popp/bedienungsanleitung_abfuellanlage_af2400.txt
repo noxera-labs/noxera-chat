@@ -1,0 +1,63 @@
+BEDIENUNGSANLEITUNG ABFÜLLANLAGE AF-2400
+Popp Feinkost — Linie 3 Salatabfüllung
+Dokumenten-Nr.: BA-AF2400-2026-03
+Hersteller: Krones FoodTec GmbH
+Anlage: AF-2400, Becherformate 250 g und 500 g
+Freigegeben durch: Technik/Instandhaltung
+Letzte Revision: 2026-04-18
+
+1. ZWECK UND GELTUNGSBEREICH
+Diese Anleitung beschreibt das sichere Starten, Rüsten, Bedienen und Stoppen
+der Abfüllanlage AF-2400 auf Linie 3. Sie gilt für Heringssalat, Eiersalat,
+Krautsalat und Brotaufstriche mit viskoser Konsistenz.
+
+2. VORAUSSETZUNGEN VOR DEM START
+- Linienfreigabe durch QS muss im Terminal L3-QS grün angezeigt werden.
+- CIP-Freigabe darf nicht älter als 12 Stunden sein.
+- Druckluft muss 6,0 bis 6,5 bar betragen.
+- Produktpuffer im Mischer M-7 muss unter +6 °C liegen.
+- Bechermagazin, Siegelfolie und Etiketten müssen zum Produktionsauftrag passen.
+- Not-Aus-Taster, Schutzhauben und Lichtgitter prüfen.
+- Metalldetektor MD-3 muss den Testkörper 0,8 mm Fe erkennen.
+
+3. STARTABLAUF
+1. Hauptschalter Q1 auf EIN stellen.
+2. HMI mit Bedienerkarte anmelden.
+3. Rezeptur über SAP-Auftrag laden, z. B. HSA-250 oder EIS-500.
+4. Becherformat bestätigen und Formatwerkzeug kontrollieren.
+5. Pumpe P-3 auf Handbetrieb stellen und Produkt bis zum Füllkopf fördern.
+6. Vorlaufbecher verwerfen, bis das Produkt blasenfrei austritt.
+7. Automatikbetrieb starten und die ersten 10 Becher wiegen.
+8. Produktionsfreigabe im Linienprotokoll bestätigen.
+
+4. SOLLWERTE
+- Füllgewicht 250-g-Becher: 250 g ± 2 g.
+- Füllgewicht 500-g-Becher: 500 g ± 3 g.
+- Taktleistung Standard: 42 Becher/min bei 250 g, 30 Becher/min bei 500 g.
+- Siegeltemperatur: 178 bis 184 °C.
+- Siegeldruck: 4,2 bis 4,8 bar.
+- Vakuum Folienansaugung: mindestens -0,55 bar.
+
+5. RÜSTEN AUF ANDERES FORMAT
+- Anlage stoppen, Restprodukt über Rücklauf in M-7 führen.
+- Becherstern, Füllrohr und Folienführung gemäß Werkzeugliste wechseln.
+- Formatwechsel darf nur durch geschulte Operatoren oder Technik erfolgen.
+- Nach jedem Rüstvorgang sind 5 Leerläufe und 10 Kontrollbecher Pflicht.
+- QS prüft Gewicht, Siegelnaht, Etikett und Metalldetektor.
+
+6. STOPP UND SCHICHTENDE
+- Produktzufuhr schließen und Pumpe P-3 leerfahren.
+- Anlage in Grundstellung fahren.
+- Restbecher aus Austrag entfernen.
+- Reinigungsmodus aktivieren und Übergabe an Reinigungsteam dokumentieren.
+
+7. SICHERHEIT
+- Schutzhauben niemals überbrücken.
+- Bei Eingriffen am Füllkopf muss die Anlage verriegelt und gegen Wiedereinschalten gesichert werden.
+- Heiße Siegelbacken nur mit Hitzeschutzhandschuhen berühren.
+- Störungen an Servoantrieben nur durch Technik/Instandhaltung beheben lassen.
+
+ANSPRECHPARTNER
+Technik Linie 3: Jens Martens — Durchwahl 1715
+Produktionsleitung Linie 3: Stefan Brügge — Durchwahl 1432
+QS-Freigabe: Karin Petersen — Durchwahl 1810
