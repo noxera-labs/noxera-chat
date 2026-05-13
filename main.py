@@ -57,6 +57,7 @@ MAX_QUESTION_CHARS = int(os.getenv("MAX_QUESTION_CHARS", "4000"))
 MAX_UPLOAD_BYTES = int(os.getenv("MAX_UPLOAD_BYTES", str(12 * 1024 * 1024)))
 MAX_IMAGE_UPLOAD_BYTES = int(os.getenv("MAX_IMAGE_UPLOAD_BYTES", str(6 * 1024 * 1024)))
 OCR_MODEL = os.getenv("ANTHROPIC_OCR_MODEL", "claude-haiku-4-5-20251001")
+WEB_SEARCH_TOOL_TYPE = os.getenv("WEB_SEARCH_TOOL_TYPE", "web_search_20260209")
 SUPPORTED_DOC_EXTS = {".pdf", ".txt", ".xlsx"}
 IMAGE_MEDIA_TYPES = {
     ".jpg": "image/jpeg",
@@ -146,6 +147,7 @@ WORKSPACES: dict = {
         "description": "Finde Antworten in Firmendokumenten, ohne Ordner, PDFs und alte Dateien manuell zu durchsuchen. Der Assistent nutzt eure Wissensbasis und zeigt Quellen direkt mit an.",
         "accent": "#00CFFF",
         "logo_url": "https://noxera-labs.de/logo.svg",
+        "allow_web_search": True,
         "system_prompt": NOXERA_PROMPT,
         "chips": [
             {"label": "Wissensbasis", "q": "Welche Dokumente sind in der Wissensbasis und was steht darin?"},
@@ -162,9 +164,11 @@ WORKSPACES: dict = {
         "description": "Antworten aus Produktionshandbüchern, Maschinenanleitungen, Wartungsplänen, Rezepturen, HACCP-Plänen und Excel-Tabellen — direkt aus eurer internen Wissensbasis. Mit Quellenangabe.",
         "accent": "#E8472D",
         "logo_url": None,
+        "allow_web_search": False,
         "system_prompt": POPP_PROMPT,
         "chips": [
             {"label": "Heringssalat-Prozess", "q": "Beschreibe Schritt für Schritt den Produktionsprozess für Heringssalat inklusive Temperaturen und Hygieneanforderungen."},
+            {"label": "Rezeptur", "q": "Wie ist die exakte Rezeptur für Heringssalat — Mengen, Lieferanten, Allergene?"},
             {"label": "Maschinenstart", "q": "Wie starte ich die Abfüllanlage AF-2400 auf Linie 3 korrekt und welche Prüfungen sind vor Produktionsbeginn nötig?"},
             {"label": "Störung beheben", "q": "Was soll ich tun, wenn die Abfüllanlage AF-2400 den Fehler E-17 oder ungleichmäßige Füllgewichte meldet?"},
             {"label": "Wartung Linie 3", "q": "Welche täglichen und wöchentlichen Wartungsarbeiten sind an Linie 3 vorgeschrieben?"},
@@ -174,13 +178,17 @@ WORKSPACES: dict = {
         ],
     },
 }
-DEFAULT_WORKSPACE = os.getenv("DEFAULT_WORKSPACE", "noxera")
+DEFAULT_WORKSPACE = os.getenv("DEFAULT_WORKSPACE", "popp")
 if DEFAULT_WORKSPACE not in WORKSPACES:
     DEFAULT_WORKSPACE = "noxera"
 
 
 def workspace_id_or_default(ws: Optional[str]) -> str:
     return ws if ws and ws in WORKSPACES else DEFAULT_WORKSPACE
+
+
+def web_search_allowed(ws_id: str) -> bool:
+    return bool(WORKSPACES.get(ws_id, {}).get("allow_web_search", False))
 
 
 def docs_dir_for(ws_id: str) -> Path:
@@ -243,11 +251,10 @@ def extract_pdf_text(content: bytes) -> str:
     return text.strip()
 
 
-def extract_excel_text(content: bytes) -> str:
-    """Convert .xlsx to a text representation suitable for embedding.
-    Each sheet becomes a labeled section; rows become pipe-separated lines."""
+def extract_excel_sheets(content: bytes) -> list[tuple[str, str]]:
+    """Convert .xlsx sheets to labeled text sections for embedding."""
     wb = load_workbook(io.BytesIO(content), data_only=True, read_only=True)
-    parts: list[str] = []
+    sheets: list[tuple[str, str]] = []
     try:
         for sheet_name in wb.sheetnames:
             ws = wb[sheet_name]
@@ -260,10 +267,15 @@ def extract_excel_text(content: bytes) -> str:
                 if any(cells):
                     rows_text.append(" | ".join(cells))
             if rows_text:
-                parts.append(f"=== Tabelle: {sheet_name} ===\n" + "\n".join(rows_text))
+                sheets.append((sheet_name, f"=== Tabelle: {sheet_name} ===\n" + "\n".join(rows_text)))
     finally:
         wb.close()
-    return "\n\n".join(parts).strip()
+    return sheets
+
+
+def extract_excel_text(content: bytes) -> str:
+    """Convert .xlsx to a text representation suitable for embedding."""
+    return "\n\n".join(text for _, text in extract_excel_sheets(content)).strip()
 
 
 def file_hash(content: bytes) -> str:
@@ -316,7 +328,13 @@ def docs_payload(ws_id: str) -> dict:
     }
 
 
-def _index_text(ws_id: str, filename: str, text: str, source_path: str = "") -> tuple[str, int]:
+def _index_text(
+    ws_id: str,
+    filename: str,
+    text: str,
+    source_path: str = "",
+    sheet_name: Optional[str] = None,
+) -> tuple[str, int]:
     """Index extracted text into the workspace collection."""
     coll = collection_for(ws_id)
     fhash = file_hash(text.encode())
@@ -339,11 +357,40 @@ def _index_text(ws_id: str, filename: str, text: str, source_path: str = "") -> 
             "chunk_index": i,
             "source_path": source_path or filename,
             "workspace": ws_id,
+            "sheet_name": sheet_name or "",
         }
         for i in range(len(chunks))
     ]
     coll.add(ids=chunk_ids, documents=chunks, metadatas=metadatas)
     return ("indexed", len(chunks))
+
+
+def _index_excel_bytes(ws_id: str, filename: str, content: bytes, source_path: str = "") -> tuple[str, int, set[str]]:
+    sheets = extract_excel_sheets(content)
+    if not sheets:
+        return ("empty", 0, set())
+
+    statuses: list[str] = []
+    total_chunks = 0
+    doc_ids: set[str] = set()
+    stem = Path(filename).stem
+    for sheet_name, text in sheets:
+        doc_ids.add(f"{stem}__{file_hash(text.encode())}")
+        status, n = _index_text(
+            ws_id,
+            filename,
+            text,
+            f"{source_path or filename} / {sheet_name}",
+            sheet_name=sheet_name,
+        )
+        statuses.append(status)
+        total_chunks += n
+
+    if any(s == "indexed" for s in statuses):
+        return ("indexed", total_chunks, doc_ids)
+    if all(s == "skipped" for s in statuses):
+        return ("skipped", total_chunks, doc_ids)
+    return (statuses[0], total_chunks, doc_ids)
 
 
 def _read_file_text(path: Path) -> str:
@@ -365,13 +412,17 @@ def sync_docs_folder(ws_id: str):
     for f in files:
         try:
             source_path = str(f.relative_to(base))
-            text = _read_file_text(f)
-            if not text:
-                status = "empty"
+            if f.suffix.lower() == ".xlsx":
+                status, _, doc_ids = _index_excel_bytes(ws_id, f.name, f.read_bytes(), source_path)
+                seen_doc_ids.update(doc_ids)
             else:
-                doc_id = f"{f.stem}__{file_hash(text.encode())}"
-                seen_doc_ids.add(doc_id)
-                status, _ = _index_text(ws_id, f.name, text, source_path)
+                text = _read_file_text(f)
+                if not text:
+                    status = "empty"
+                else:
+                    doc_id = f"{f.stem}__{file_hash(text.encode())}"
+                    seen_doc_ids.add(doc_id)
+                    status, _ = _index_text(ws_id, f.name, text, source_path)
             summary[status] = summary.get(status, 0) + 1
         except Exception as e:
             summary["errors"] += 1
@@ -434,7 +485,7 @@ def _write_demo_doc(path: Path, content: str):
 def _seed_popp_text(popp_dir: Path):
     (popp_dir / "produktionshandbuch_heringssalat.txt").write_text(
         """PRODUKTIONSHANDBUCH HERINGSSALAT NACH HAUSFRAUENART
-Popp Feinkost — Werk Mariager / Linie 3
+Popp Feinkost — Werk Kaltenkirchen / Linie 3
 Dokumenten-Nr.: PH-HSA-2026-01
 Freigegeben durch: Produktionsleitung & QS
 Letzte Revision: 2026-02-12
@@ -504,7 +555,7 @@ Schichtleitung Frühschicht: Marek Wojciechowski — Durchwahl 1438
 
     (popp_dir / "hygieneplan_produktion.txt").write_text(
         """HYGIENEPLAN PRODUKTION
-Popp Feinkost — Standorte Mariager und Bremerhaven
+Popp Feinkost — Standorte Kaltenkirchen und Bremerhaven
 Dokumenten-Nr.: HYG-PRO-2026-04
 Freigegeben durch: QS-Leitung
 Letzte Revision: 2026-01-08
@@ -512,7 +563,7 @@ Letzte Revision: 2026-01-08
 1. GELTUNGSBEREICH
 Dieser Hygieneplan gilt für alle Produktionsbereiche, Lager- und Versandflächen,
 inklusive Fischverarbeitung (Linie 1-3), Salatherstellung (Linie 4-6),
-Brotaufstrich-Linie (Linie 7) und das Hochregallager Mariager.
+Brotaufstrich-Linie (Linie 7) und das Hochregallager Kaltenkirchen.
 
 2. PERSONALHYGIENE
 2.1 Berufskleidung
@@ -1060,18 +1111,59 @@ def retrieve(ws_id: str, question: str, n_results: int) -> tuple[list[str], list
 
     seen: set = set()
     out_chunks, out_metas, out_dists = [], [], []
+    for chunk, meta in lexical_matches(coll, question):
+        key = (meta.get("filename"), meta.get("sheet_name"), meta.get("chunk_index"))
+        if key in seen:
+            continue
+        seen.add(key)
+        out_chunks.append(chunk)
+        out_metas.append(meta)
+        out_dists.append(0.0)
+        if len(out_chunks) >= n:
+            return out_chunks, out_metas, out_dists
+
     for chunk, m, d in zip(chunks, metas, dists):
         relevance = 1 - d
         if relevance < RAG_MIN_RELEVANCE:
             continue
-        key = (m.get("filename"), m.get("chunk_index"))
+        key = (m.get("filename"), m.get("sheet_name"), m.get("chunk_index"))
         if key in seen:
             continue
         seen.add(key)
         out_chunks.append(chunk)
         out_metas.append(m)
         out_dists.append(d)
+        if len(out_chunks) >= n:
+            break
     return out_chunks, out_metas, out_dists
+
+
+def lexical_matches(coll, question: str) -> list[tuple[str, dict]]:
+    q = question.lower()
+    terms = [t for t in re.findall(r"[a-zäöüß0-9]{4,}", q) if t not in {"welche", "exakte"}]
+    try:
+        all_items = coll.get()
+    except Exception:
+        return []
+
+    scored: list[tuple[int, str, dict]] = []
+    for chunk, meta in zip(all_items.get("documents", []) or [], all_items.get("metadatas", []) or []):
+        if not chunk or not meta:
+            continue
+        text = chunk.lower()
+        filename = (meta.get("filename") or "").lower()
+        sheet_name = (meta.get("sheet_name") or "").lower()
+        score = 0
+        if sheet_name and sheet_name in q:
+            score += 4
+        if filename.endswith(".xlsx") and ("rezeptur" in q or "excel" in q or "tabelle" in q):
+            score += 2
+        score += min(4, sum(1 for term in terms if term in text))
+        if score >= 5:
+            scored.append((score, chunk, meta))
+
+    scored.sort(key=lambda item: item[0], reverse=True)
+    return [(chunk, meta) for _, chunk, meta in scored[:3]]
 
 
 def build_messages(question: str, chunks: list[str], metadatas: list[dict], history: Optional[list[dict]] = None) -> list[dict]:
@@ -1091,7 +1183,7 @@ def build_messages(question: str, chunks: list[str], metadatas: list[dict], hist
         final = question
     else:
         context = "\n\n---\n\n".join(
-            f"[{i+1}] Quelle: {m.get('filename', 'Unbekannt')}, Abschnitt {m.get('chunk_index', 0)+1}\n{chunk}"
+            f"[{i+1}] Quelle: {source_label(m)}, Abschnitt {m.get('chunk_index', 0)+1}\n{chunk}"
             for i, (chunk, m) in enumerate(zip(chunks, metadatas))
         )
         final = f"Kontext:\n{context}\n\nFrage: {question}"
@@ -1099,11 +1191,28 @@ def build_messages(question: str, chunks: list[str], metadatas: list[dict], hist
     return messages
 
 
+def source_label(meta: dict) -> str:
+    filename = meta.get("filename", "Unbekannt")
+    sheet_name = (meta.get("sheet_name") or "").strip()
+    if sheet_name:
+        return f"{filename} / {sheet_name}"
+    return filename
+
+
+def no_context_answer(ws_id: str) -> Optional[str]:
+    if ws_id != "popp":
+        return None
+    return (
+        "Diese Information ist nicht in der freigegebenen Wissensbasis enthalten. "
+        "Bitte die QS-Leitung oder die zuständige Fachabteilung kontaktieren."
+    )
+
+
 def sources_payload(metadatas: list[dict], distances: list[float]) -> list[dict]:
     return [
         {
             "index": i + 1,
-            "filename": m.get("filename", "Unbekannt"),
+            "filename": source_label(m),
             "chunk_index": (m.get("chunk_index") or 0) + 1,
             "relevance_score": round(1 - dist, 4),
         }
@@ -1184,6 +1293,7 @@ async def list_workspaces():
                 "description": w["description"],
                 "accent": w["accent"],
                 "logo_url": w.get("logo_url"),
+                "allow_web_search": w.get("allow_web_search", False),
                 "chips": w["chips"],
             }
             for w in WORKSPACES.values()
@@ -1206,6 +1316,11 @@ async def query_stream(req: QueryRequest):
             return
         if chunks:
             yield sse("sources", {"sources": sources_payload(metadatas, distances)})
+        no_context = no_context_answer(ws_id)
+        if not chunks and no_context:
+            yield sse("token", {"text": no_context})
+            yield sse("done", {})
+            return
 
         try:
             stream_kwargs: dict = dict(
@@ -1214,8 +1329,8 @@ async def query_stream(req: QueryRequest):
                 system=system_prompt_for(ws_id),
                 messages=build_messages(req.question, chunks, metadatas, req.history),
             )
-            if req.web_search:
-                stream_kwargs["tools"] = [{"type": "web_search_20260209", "name": "web_search"}]
+            if req.web_search and web_search_allowed(ws_id):
+                stream_kwargs["tools"] = [{"type": WEB_SEARCH_TOOL_TYPE, "name": "web_search"}]
                 yield sse("status", {"text": "Web-Suche läuft…"})
 
             async with anthropic_client.messages.stream(**stream_kwargs) as stream:
@@ -1241,14 +1356,22 @@ async def query(req: QueryRequest):
     model = model_for(req)
     n_results = max(1, min(req.n_results, MAX_RETRIEVAL_RESULTS))
     chunks, metadatas, distances = retrieve(ws_id, req.question, n_results)
+    no_context = no_context_answer(ws_id)
+    if not chunks and no_context:
+        return {
+            "answer": no_context,
+            "sources": [],
+            "model": model,
+            "workspace": ws_id,
+        }
     stream_kwargs: dict = dict(
         model=model,
         max_tokens=MAX_RESPONSE_TOKENS,
         system=system_prompt_for(ws_id),
         messages=build_messages(req.question, chunks, metadatas, req.history),
     )
-    if req.web_search:
-        stream_kwargs["tools"] = [{"type": "web_search_20260209", "name": "web_search"}]
+    if req.web_search and web_search_allowed(ws_id):
+        stream_kwargs["tools"] = [{"type": WEB_SEARCH_TOOL_TYPE, "name": "web_search"}]
 
     try:
         response = await anthropic_client.messages.create(**stream_kwargs)
@@ -1303,7 +1426,10 @@ async def upload_document(
     if not stored_path.exists():
         stored_path.write_bytes(content)
 
-    status, n = _index_text(ws_id, stored_name, text, stored_name)
+    if suffix == ".xlsx":
+        status, n, _ = _index_excel_bytes(ws_id, stored_name, content, stored_name)
+    else:
+        status, n = _index_text(ws_id, stored_name, text, stored_name)
     return {
         "status": status,
         "chunks": n,

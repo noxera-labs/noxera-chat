@@ -29,6 +29,7 @@
       --text3:     rgba(240,240,244,0.34);
       --danger:    #f87171;
       --green:     #22c55e;
+      --amber:     #f59e0b;
       --fd:        'Space Grotesk', sans-serif;
       --f:         'Plus Jakarta Sans', sans-serif;
       --mono:      'JetBrains Mono', monospace;
@@ -39,6 +40,9 @@
     }
 
     body { font-family: var(--f); background: var(--bg); color: var(--text); display: flex; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+    body.customer-demo {
+      --max-w: 900px;
+    }
 
     /* ─── Layout ─── */
     .app { display: flex; width: 100%; height: 100vh; height: 100dvh; overflow: hidden; }
@@ -175,7 +179,7 @@
       padding: 12px;
       border: 1px solid var(--border);
       border-radius: 8px;
-      background: linear-gradient(180deg, rgba(0,207,255,0.07), rgba(255,255,255,0.025));
+      background: linear-gradient(180deg, var(--adim), rgba(255,255,255,0.025));
     }
     .kb-card-head {
       display: flex; align-items: center; justify-content: space-between; gap: 8px;
@@ -329,7 +333,7 @@
     }
     .main::before {
       background:
-        linear-gradient(rgba(0,207,255,0.045) 1px, transparent 1px),
+        linear-gradient(var(--adim) 1px, transparent 1px),
         linear-gradient(90deg, rgba(255,255,255,0.026) 1px, transparent 1px);
       background-size: 76px 76px;
       mask-image: linear-gradient(to bottom, rgba(0,0,0,0.55), rgba(0,0,0,0.14) 58%, transparent 86%);
@@ -338,7 +342,7 @@
       animation: gridDrift 28s linear infinite;
     }
     .main::after {
-      background: linear-gradient(115deg, transparent 18%, rgba(0,207,255,0.05) 44%, rgba(255,255,255,0.035) 50%, transparent 72%);
+      background: linear-gradient(115deg, transparent 18%, var(--adim) 44%, rgba(255,255,255,0.035) 50%, transparent 72%);
       transform: translateX(-72%);
       opacity: 0.72;
       animation: softSweep 18s ease-in-out infinite;
@@ -364,12 +368,19 @@
     }
     .badge-icon {
       width: 48px; height: 48px; border-radius: 14px;
-      background: linear-gradient(135deg, #0a0a0f, #111118);
+      background: linear-gradient(135deg, rgba(255,255,255,0.05), var(--adim));
       border: 1px solid var(--border2);
       display: flex; align-items: center; justify-content: center;
-      overflow: hidden; box-shadow: 0 8px 32px rgba(0,207,255,0.12);
+      overflow: hidden; box-shadow: 0 8px 32px var(--adim);
     }
     .badge-icon img { width: 32px; height: 32px; object-fit: contain; }
+    .badge-initials {
+      display: none;
+      font-family: var(--fd);
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
     .badge-tag {
       padding: 4px 10px; border-radius: 6px;
       background: var(--adim); border: 1px solid var(--aborder);
@@ -399,6 +410,39 @@
     .welcome-by {
       font-size: 0.8rem; color: var(--text3); margin-bottom: 32px;
       font-family: var(--mono);
+    }
+    .demo-proof {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(120px, 1fr));
+      gap: 8px;
+      width: min(720px, 100%);
+      margin: 0 0 28px;
+    }
+    .proof-item {
+      min-height: 58px;
+      padding: 11px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: rgba(255,255,255,0.035);
+    }
+    .proof-label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 0.56rem;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--text3);
+      margin-bottom: 5px;
+    }
+    .proof-value {
+      display: block;
+      font-family: var(--fd);
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     /* ─── Messages ─── */
@@ -437,11 +481,19 @@
     }
     .cite:hover { background: rgba(0,207,255,0.18); transform: translateY(-1px); }
 
-    .sources { margin-top: 12px; display: flex; flex-direction: column; gap: 4px; animation: fadeIn 0.35s ease; }
-    .sources-head { font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text3); margin-bottom: 3px; }
+    .sources { margin-top: 14px; display: flex; flex-direction: column; gap: 6px; animation: fadeIn 0.35s ease; }
+    .sources-head {
+      display: flex; align-items: center; gap: 7px;
+      font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text3); margin-bottom: 3px;
+    }
+    .sources-head::before {
+      content: '';
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--green); box-shadow: 0 0 10px rgba(34,197,94,0.35);
+    }
     .source {
       display: flex; align-items: center; gap: 9px; padding: 8px 11px;
-      background: var(--s1); border: 1px solid var(--border);
+      background: rgba(255,255,255,0.04); border: 1px solid var(--border);
       border-radius: 8px; font-size: 0.8rem; color: var(--text2);
       transition: border-color 0.13s, background 0.13s; cursor: default;
     }
@@ -455,6 +507,15 @@
     .source-meta { flex: 1; min-width: 0; }
     .source-name { color: var(--text); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 0.82rem; }
     .source-detail { font-size: 0.68rem; color: var(--text3); margin-top: 1px; font-family: var(--mono); }
+    .source-score {
+      flex-shrink: 0;
+      padding: 4px 6px;
+      border-radius: 5px;
+      border: 1px solid var(--border);
+      font-family: var(--mono);
+      font-size: 0.58rem;
+      color: var(--text3);
+    }
     .source.highlight { border-color: var(--accent); background: var(--adim); }
 
     .cursor { display: inline-block; width: 6px; height: 0.85em; background: var(--accent); vertical-align: -1px; margin-left: 2px; animation: blink 1s steps(2,start) infinite; border-radius: 1px; }
@@ -546,6 +607,15 @@
       display: flex; justify-content: center; margin-top: 8px;
       font-family: var(--mono); font-size: 0.62rem;
       color: var(--text3); text-align: center; opacity: 0.72;
+    }
+    body.customer-demo #model-pill-btn,
+    body.customer-demo #model-toggle-btn,
+    body.customer-demo #search-toggle-btn {
+      display: none;
+    }
+    body.customer-demo .cost-note {
+      color: var(--text2);
+      opacity: 0.9;
     }
 
     /* ─── Model dropdown ─── */
@@ -646,6 +716,12 @@
       .welcome-title { font-size: 1.55rem; }
       .welcome-desc { font-size: 0.9rem; max-width: 100%; }
       .welcome-by { margin-bottom: 20px; }
+      .demo-proof {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        margin-bottom: 20px;
+      }
+      .proof-item { min-height: 54px; }
+      .proof-value { font-size: 0.84rem; }
       .app-badge { margin-bottom: 14px; }
       .badge-icon { width: 42px; height: 42px; }
 
@@ -1029,9 +1105,10 @@
     <div class="welcome" id="welcome">
       <div class="app-badge">
         <div class="badge-icon">
-          <img src="https://noxera-labs.de/favicon.svg" alt="" onerror="this.style.display='none'" />
+          <img id="badge-logo" src="https://noxera-labs.de/favicon.svg" alt="" onerror="this.style.display='none'" />
+          <span class="badge-initials" id="badge-initials">P</span>
         </div>
-        <span class="badge-tag">AI Chat</span>
+        <span class="badge-tag" id="badge-tag">AI Chat</span>
       </div>
       <h1 class="welcome-title">
         <span id="welcome-title-text">Noxera Labs AI</span>
@@ -1041,6 +1118,12 @@
       </h1>
       <p class="welcome-desc" id="welcome-desc">Finde Antworten in Firmendokumenten, ohne Ordner, PDFs und alte Dateien manuell zu durchsuchen. Der Assistent nutzt eure Wissensbasis und zeigt Quellen direkt mit an.</p>
       <p class="welcome-by" id="welcome-by">RAG-Demo von Noxera Labs</p>
+      <div class="demo-proof" id="demo-proof">
+        <div class="proof-item"><span class="proof-label">Modus</span><span class="proof-value" id="proof-mode">Quellenpflicht</span></div>
+        <div class="proof-item"><span class="proof-label">Daten</span><span class="proof-value" id="proof-data">PDF · TXT · Excel</span></div>
+        <div class="proof-item"><span class="proof-label">Einsatz</span><span class="proof-value" id="proof-use">QS & Produktion</span></div>
+        <div class="proof-item"><span class="proof-label">Web</span><span class="proof-value" id="proof-web">Deaktiviert</span></div>
+      </div>
     </div>
 
     <!-- Messages -->
@@ -1089,7 +1172,7 @@
         </div>
 
         <div class="quick-chips" id="quick-chips"></div>
-        <div class="cost-note">Interner Hinweis: Claude-Tokens pro Antwort. Web & Scan bewusst aktivieren.</div>
+        <div class="cost-note" id="demo-note">Freigegebene Wissensbasis · Antworten mit Quellen · Keine Websuche im Kundenmodus</div>
       </div>
     </div>
   </div>
@@ -1107,7 +1190,8 @@ let webSearchEnabled = false;
 let memoryEnabled = false;
 
 // ─── Workspaces (multi-tenant) ───
-let activeWorkspace = localStorage.getItem('nx_workspace') || 'noxera';
+const urlWorkspace = new URLSearchParams(window.location.search).get('ws');
+let activeWorkspace = urlWorkspace || localStorage.getItem('nx_workspace') || '';
 let workspaces = [];
 
 function getActiveWs() {
@@ -1292,10 +1376,20 @@ const wsDrop      = document.getElementById('ws-dropdown');
 const welcomeTitleEl = document.getElementById('welcome-title-text');
 const welcomeDescEl  = document.getElementById('welcome-desc');
 const welcomeByEl    = document.getElementById('welcome-by');
+const badgeLogoEl = document.getElementById('badge-logo');
+const badgeInitialsEl = document.getElementById('badge-initials');
+const badgeTagEl = document.getElementById('badge-tag');
+const proofModeEl = document.getElementById('proof-mode');
+const proofDataEl = document.getElementById('proof-data');
+const proofUseEl = document.getElementById('proof-use');
+const proofWebEl = document.getElementById('proof-web');
+const demoNoteEl = document.getElementById('demo-note');
 
 function applyWorkspace() {
   const ws = getActiveWs();
   if (!ws) return;
+  const isCustomerDemo = ws.id === 'popp';
+  document.body.classList.toggle('customer-demo', isCustomerDemo);
   document.documentElement.style.setProperty('--accent',  ws.accent);
   document.documentElement.style.setProperty('--accent2', ws.accent);
   document.documentElement.style.setProperty('--adim',    hexToRgba(ws.accent, 0.10));
@@ -1305,7 +1399,25 @@ function applyWorkspace() {
   welcomeDescEl.textContent   = ws.description;
   welcomeByEl.textContent     = ws.tagline;
   document.title              = `${ws.name} — KI-Assistent`;
+  badgeTagEl.textContent      = isCustomerDemo ? 'Kunden-Demo' : 'AI Chat';
+  proofModeEl.textContent     = isCustomerDemo ? 'RAG-only' : 'Quellenpflicht';
+  proofDataEl.textContent     = isCustomerDemo ? '10 Demo-Dateien' : 'PDF · TXT · Excel';
+  proofUseEl.textContent      = isCustomerDemo ? 'QS · Technik · Linie' : 'Teams & Wissen';
+  proofWebEl.textContent      = ws.allow_web_search ? 'Optional' : 'Deaktiviert';
+  demoNoteEl.textContent      = isCustomerDemo
+    ? 'Freigegebene Wissensbasis · Antworten mit Quellen · Keine Websuche im Kundenmodus'
+    : 'Dokumentensuche mit Quellen · Upload für PDF, TXT und Excel · Websuche optional';
+  if (ws.logo_url) {
+    badgeLogoEl.src = ws.logo_url;
+    badgeLogoEl.style.display = '';
+    badgeInitialsEl.style.display = 'none';
+  } else {
+    badgeLogoEl.style.display = 'none';
+    badgeInitialsEl.textContent = (ws.name || 'N').slice(0, 1);
+    badgeInitialsEl.style.display = 'block';
+  }
   renderChips();
+  updateWebSearchToggle();
 }
 
 function renderChips() {
@@ -1367,10 +1479,10 @@ async function loadWorkspaces() {
     if (!res.ok) throw new Error('Workspaces konnten nicht geladen werden');
     const data = await res.json();
     workspaces = data.workspaces || [];
-    if (!workspaces.find(w => w.id === activeWorkspace)) {
+    if (!activeWorkspace || !workspaces.find(w => w.id === activeWorkspace)) {
       activeWorkspace = data.default || (workspaces[0] && workspaces[0].id) || 'noxera';
-      localStorage.setItem('nx_workspace', activeWorkspace);
     }
+    localStorage.setItem('nx_workspace', activeWorkspace);
     applyWorkspace();
     renderWorkspaceDropdown();
   } catch (e) {
@@ -1439,15 +1551,26 @@ memoryToggleBtn.addEventListener('click', () => {
 // ─── Web search toggle ───
 const searchToggleBtn = document.getElementById('search-toggle-btn');
 const searchLabel = document.getElementById('search-label');
+function updateWebSearchToggle() {
+  const ws = getActiveWs();
+  const allowed = !!(ws && ws.allow_web_search);
+  if (!allowed) webSearchEnabled = false;
+  searchToggleBtn.disabled = !allowed;
+  searchToggleBtn.classList.toggle('active', webSearchEnabled);
+  searchLabel.textContent = webSearchEnabled ? 'Web ✓' : 'Web';
+  searchToggleBtn.title = allowed
+    ? (webSearchEnabled ? 'Web-Suche aktiv – klicken zum Deaktivieren' : 'Web-Suche aktivieren – Claude sucht live im Internet')
+    : 'Web-Suche ist für diesen Workspace deaktiviert';
+}
 searchToggleBtn.addEventListener('click', () => {
+  const ws = getActiveWs();
+  if (!ws || !ws.allow_web_search) return;
   if (!webSearchEnabled) {
     const ok = confirm('Web-Suche kann zusätzliche API-Kosten erzeugen. Für Dokumentensuche ist sie meistens nicht nötig. Aktivieren?');
     if (!ok) return;
   }
   webSearchEnabled = !webSearchEnabled;
-  searchToggleBtn.classList.toggle('active', webSearchEnabled);
-  searchLabel.textContent = webSearchEnabled ? 'Web ✓' : 'Web';
-  searchToggleBtn.title = webSearchEnabled ? 'Web-Suche aktiv – klicken zum Deaktivieren' : 'Web-Suche aktivieren – Claude sucht live im Internet';
+  updateWebSearchToggle();
 });
 
 // ─── File upload ───
@@ -1655,13 +1778,14 @@ function loadingMessage() {
 function renderSources(parent, sources) {
   const wrap = document.createElement('div');
   wrap.className = 'sources';
-  wrap.innerHTML = `<div class="sources-head">Quellen</div>` + sources.map(s => `
+  wrap.innerHTML = `<div class="sources-head">Geprüfte Quellen</div>` + sources.map(s => `
     <div class="source" data-source="${s.index}">
       <div class="source-num">${s.index}</div>
       <div class="source-meta">
         <div class="source-name">${esc(s.filename)}</div>
-        <div class="source-detail">Abschnitt ${s.chunk_index} &nbsp;·&nbsp; Relevanz ${(s.relevance_score*100).toFixed(0)}%</div>
+        <div class="source-detail">Abschnitt ${s.chunk_index}</div>
       </div>
+      <div class="source-score">${(s.relevance_score*100).toFixed(0)}%</div>
     </div>`).join('');
   parent.appendChild(wrap);
   return wrap;
